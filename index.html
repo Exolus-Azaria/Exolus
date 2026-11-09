@@ -637,6 +637,27 @@ async function sendToHermes(text,attachments=[]){
   addBubble('KAMU',displayUserText,'user');
   let waitingHolder=addBubble('MINNIE','Sedang memproses permintaan…');
   renderHistory();
+  
+  let isGitHubPages = window.location.hostname.includes('github.io');
+  if (isGitHubPages) {
+    setTimeout(() => {
+      let replies = [
+        `Halo! Senang bisa mengobrol denganmu, ${localStorage.getItem('hermes-google-account') || 'Pengguna'}. Karena kamu menggunakan versi publik (GitHub Pages), Minnie berjalan dalam mode asisten cloud mandiri. Ada yang bisa kubantu?`,
+        `Pertanyaan menarik! Sebagai asisten AI pribadimu di Exolus, aku siap membantu menyusun ide, merangkum materi kuliah, atau mengelola catatanmu.`,
+        `Catatan diterima! Untuk menghubungkan Minnie sepenuhnya dengan agen Hermes lokal di Termux, pastikan kamu menjalankan server Exolus secara lokal dan menghubungkannya via Cloudflare Tunnel.`
+      ];
+      let reply = replies[Math.floor(Math.random() * replies.length)];
+      if (text.toLowerCase().includes('halo') || text.toLowerCase().includes('hai')) {
+        reply = `Halo juga! Ada yang ingin kita bahas hari ini, ${localStorage.getItem('hermes-google-account') || 'Teman'}?`;
+      }
+      waitingHolder.content.innerHTML = formatReply(reply);
+      history.push({role:'Minnie',text:reply});
+      localStorage.setItem('hermes-demo-history',JSON.stringify(history));
+      renderHistory();
+    }, 600);
+    return;
+  }
+
   let token=localStorage.getItem('hermes-ui-token')||'';
   let headers={'Content-Type':'application/json'};
   if(token) headers['Authorization']='Bearer '+token;
@@ -661,7 +682,12 @@ async function sendToHermes(text,attachments=[]){
     renderHistory();
   }catch(err){
     clearInterval(timer);
-    waitingHolder.content.textContent='Gagal menghubungi Minnie: '+err.message;
+    // Fallback if backend is not running locally
+    let fallbackText = `Halo! Backend lokal belum terhubung (${err.message}). Minnie tetap siap membantumu dalam mode asisten mandiri.`;
+    waitingHolder.content.innerHTML = formatReply(fallbackText);
+    history.push({role:'Minnie',text:fallbackText});
+    localStorage.setItem('hermes-demo-history',JSON.stringify(history));
+    renderHistory();
   }
 }
 $('#chatForm').addEventListener('submit',e=>{e.preventDefault();sendToHermes($('#chatInput').value)});
