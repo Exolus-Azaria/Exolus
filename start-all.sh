@@ -47,7 +47,14 @@ if [ ! -f "$PIDFILE" ]; then
   echo "Exolus Server berhasil dihidupkan."
 fi
 
-# 5. Pasang Termux Boot otomatis
+# 5. Jalankan Cloudflare Tunnel otomatis (jika belum berjalan)
+if ! pgrep -f "cloudflared" >/dev/null 2>&1; then
+  echo "Menjalankan Cloudflare Tunnel..."
+  nohup bash "$PWD/start-tunnel.sh" >> "$HOME/cloudflared-exolus.log" 2>&1 < /dev/null &
+  echo "Cloudflare Tunnel aktif di background (auto-sync ke GitHub)."
+fi
+
+# 6. Pasang Termux Boot otomatis
 BOOT_DIR="$HOME/.termux/boot"
 mkdir -p "$BOOT_DIR"
 BOOT_SCRIPT="$BOOT_DIR/start-exolus.sh"
