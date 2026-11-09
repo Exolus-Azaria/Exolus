@@ -469,6 +469,7 @@ input[type=file]::file-selector-button{background:color-mix(in srgb,var(--accent
 <section id="page-settings" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 1.4-3.4 1.5 1.5 0 0 1 1.1-2.6H18a3 3 0 0 0 3-3c0-5-4-9-9-9Z"/><circle cx="7.5" cy="10" r="1"/><circle cx="11" cy="6.5" r="1"/><circle cx="16" cy="8" r="1"/></svg></span> Pengaturan Tampilan</h1><div class="panel"><h2>Tema Warna</h2><div class="field"><label>Pilih preset</label><select id="theme"><option value="blue">Cyber Blue</option><option value="purple">Phantom Purple</option><option value="green">Matrix Green</option><option value="red">Crimson Red</option><option value="orange">Solar Orange</option><option value="white">Minimal White</option><option value="custom">Custom Color</option></select></div><div class="field"><label>Warna aksen kustom</label><div class="row"><input type="color" id="customColor" value="#36c9ff"><span class="muted">Pilih warna utama UI</span></div></div></div>
 <div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg></span> Background</h2><div class="field"><label>Jenis background</label><select id="bgType"><option value="default">Bawaan futuristik</option><option value="photo">Foto / GIF dari perangkat</option><option value="video">Video dari perangkat</option><option value="url">URL gambar / GIF / video</option><option value="color">Warna polos</option></select></div><div class="field" id="bgPhotoField"><label>Foto atau GIF</label><div class="file-control"><input type="file" id="bgFile" accept="image/*,image/gif,.gif,*/*"><button class="file-clear" type="button" id="clearPhoto">Batal pilih</button></div><div id="bgFileNotice" class="file-list" style="margin-top:6px;font-size:12px;color:var(--muted)"></div></div><div class="field hidden" id="bgVideoField"><label>Video</label><div class="file-control"><input type="file" id="videoFile" accept="video/*"><button class="file-clear" type="button" id="clearVideo">Batal pilih</button></div></div><div class="field hidden" id="bgUrlField"><label>URL gambar, GIF, atau video</label><input type="url" id="bgUrl" placeholder="https://contoh.com/background.jpg"><button class="file-clear" type="button" id="clearUrl">Hapus URL</button></div><div class="field"><label>Lapisan gelap: <span id="shadeLabel">68%</span></label><input id="shade" type="range" min="10" max="90" value="68"></div><div class="row"><button class="btn" id="applyBg">Terapkan background</button><button class="btn secondary" id="resetBg">Reset</button></div><p class="notice">Pilih satu jenis background, lalu terapkan. Kamu bisa mengatur tingkat gelap agar teks tetap terbaca.</p></div>
 <div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span> Waktu & Lokasi</h2><div class="field"><label>Zona waktu</label><select id="tz"><option value="Asia/Pontianak">Pontianak / Kalimantan Barat — WIB</option><option value="Asia/Jakarta">Jakarta — WIB</option><option value="Asia/Makassar">Makassar — WITA</option><option value="Asia/Jayapura">Jayapura — WIT</option></select></div><div class="field"><label>Label lokasi</label><input id="locLabel" type="text" value="Pontianak, Kalimantan Barat"></div><button class="btn" id="saveLocation">Simpan waktu & lokasi</button></div>
+<div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.58 4 8 4s8-1.79 8-4M4 7c0-2.21 3.58-4 8-4s8 1.79 8 4m0 5c0 2.21-3.58 4-8 4s-8-1.79-8-4"/></svg></span> Backend API URL (Cloudflare Tunnel)</h2><p class="notice" style="margin-bottom:12px">Jika mengakses dari web publik (GitHub Pages), masukkan URL Tunnel Termux backend Anda di sini agar login dan chat terhubung.</p><div class="field"><label>URL Backend</label><div style="display:flex;gap:8px"><input type="url" id="backendApiUrlInput" placeholder="https://xxxx.trycloudflare.com"><button class="btn secondary" id="saveBackendApiUrlBtn" type="button">Simpan</button></div></div></div>
 <div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3"/></svg></span> Login Google</h2><p class="notice" style="margin-bottom:12px">Pengguna reguler tidak perlu melakukan login.</p><div id="tokenStatusText" class="status-detail" style="margin-bottom:12px">Memeriksa status...</div><div class="field"><label>Google Client ID (OAuth 2.0)</label><div style="display:flex;gap:8px"><input type="text" id="googleClientIdInput" placeholder="Contoh: xxxxxxxx.apps.googleusercontent.com"><button class="btn secondary" id="saveClientIdBtn" type="button">Simpan</button></div><p class="notice" style="font-size:11px;margin-top:4px">Pastikan URL aplikasi ini (<code id="currentOriginLabel"></code>) ditambahkan pada <b>Authorized JavaScript origins</b> di Google Cloud Console.</p></div><div class="field" style="margin-top:14px"><button class="btn" id="customGoogleLoginBtn" type="button" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.15C3.15 21.36 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.15C.42 8.08 0 9.75 0 11.5s.42 3.42 1.15 4.9l4.12-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.64 1.15 6.6l4.12 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>Sign in with Google</button><div style="margin-top:12px"><button class="btn secondary hidden" id="clearTokenBtn" type="button" style="width:100%">Keluar / Hapus Sesi Dev</button></div></div></div></section>
 <footer>EXOLUS · PERSONAL HELPER · MINNIE · v2.2.5.1</footer></main></div>
 <script>
@@ -510,10 +511,12 @@ function getUiToken(promptIfMissing=true){
   }
   return t||'';
 }
+function getApiBaseUrl(){let url=(localStorage.getItem('hermes-backend-url')||'').trim();if(url.endsWith('/'))url=url.slice(0,-1);return url;}
+function apiFetch(path,options={}){const base=getApiBaseUrl();return fetch(base?base+path:path,options);}
 async function verifyToken(t){
   if(!t)return {ok:false,error:'Token kosong.'};
   try{
-    const r=await fetch('/api/auth/verify',{headers:{'Authorization':'Bearer '+t}});
+    const r=await apiFetch('/api/auth/verify',{headers:{'Authorization':'Bearer '+t}});
     const d=await r.json().catch(()=>({}));
     return {ok:r.ok,error:d.error||('HTTP '+r.status)};
   }catch(e){return {ok:false,error:e.message};}
@@ -523,7 +526,7 @@ async function handleGoogleLogin(response) {
   const statusEl = $('#tokenStatusText');
   if (statusEl) statusEl.innerHTML = '<span class="muted">Memverifikasi akun Google (brayenbayen@gmail.com)...</span>';
   try {
-    const r = await fetch('/api/auth/google', {
+    const r = await apiFetch('/api/auth/google', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ credential })
@@ -603,7 +606,7 @@ async function uploadSingleFile(file,token=''){
       try{
         const headers={'Content-Type':'application/json'};
         if(token) headers['Authorization']='Bearer '+token;
-        const res=await fetch('/api/upload',{
+        const res=await apiFetch('/api/upload',{
           method:'POST',
           headers,
           body:JSON.stringify({filename:file.name,dataBase64:reader.result})
@@ -662,7 +665,7 @@ async function sendToHermes(text,attachments=[]){
     waitingHolder.content.textContent='Minnie sedang menganalisis'+('.'.repeat(dots));
   },600);
   try{
-    let r=await fetch('/api/chat',{
+    let r=await apiFetch('/api/chat',{
       method:'POST',
       headers,
       body:JSON.stringify({message:text||'Analisis berkas terlampir.',history:history.slice(-12),attachments})
@@ -801,7 +804,7 @@ function updateStatusCard(prefix,d){
     : mini('▣','Backend Exolus tidak dapat dijangkau.');
 }
 
-async function refreshBackendStatus(){const btn=$('#refreshStatus');const checked=$('#lastChecked');if(btn){btn.disabled=true;btn.classList.add('is-loading');btn.textContent='Memeriksa…'}if(checked){checked.classList.add('is-checking');checked.textContent='Sedang memeriksa seluruh komponen…'}['#hermesPill','#routerPill','#modelPill','#backendPill','#homeHermesPill','#homeRouterPill','#homeModelPill','#homeBackendPill'].forEach(id=>{const el=$(id);if(el){el.className='status-pill wait';el.textContent='Memeriksa…'}});try{const statusRequestStarted=Date.now();const r=await fetch('/api/status',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();d.backendLatencyMs=Date.now()-statusRequestStarted;updateStatusCard('home',d);updateStatusCard('detail',d);$('#lastChecked').textContent='Pemeriksaan terakhir: '+new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date(d.checkedAt||Date.now()));}catch(e){const failed={hermes:false,router:false,modelReady:false,backend:false,hermesDetail:'Status tidak dapat dijangkau.',routerDetail:'Status tidak dapat dijangkau.',configuredModel:'Belum tersedia'};updateStatusCard('home',failed);updateStatusCard('detail',failed);$('#homeBackendDetail').textContent='API Exolus tidak dapat dijangkau.';$('#lastChecked').textContent='Pemeriksaan gagal: '+e.message;}finally{if(btn){btn.disabled=false;btn.classList.remove('is-loading');btn.textContent='⟳ Periksa ulang'}if(checked){checked.classList.remove('is-checking')}}}
+async function refreshBackendStatus(){const btn=$('#refreshStatus');const checked=$('#lastChecked');if(btn){btn.disabled=true;btn.classList.add('is-loading');btn.textContent='Memeriksa…'}if(checked){checked.classList.add('is-checking');checked.textContent='Sedang memeriksa seluruh komponen…'}['#hermesPill','#routerPill','#modelPill','#backendPill','#homeHermesPill','#homeRouterPill','#homeModelPill','#homeBackendPill'].forEach(id=>{const el=$(id);if(el){el.className='status-pill wait';el.textContent='Memeriksa…'}});try{const statusRequestStarted=Date.now();const r=await apiFetch('/api/status',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();d.backendLatencyMs=Date.now()-statusRequestStarted;updateStatusCard('home',d);updateStatusCard('detail',d);$('#lastChecked').textContent='Pemeriksaan terakhir: '+new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date(d.checkedAt||Date.now()));}catch(e){const failed={hermes:false,router:false,modelReady:false,backend:false,hermesDetail:'Status tidak dapat dijangkau.',routerDetail:'Status tidak dapat dijangkau.',configuredModel:'Belum tersedia'};updateStatusCard('home',failed);updateStatusCard('detail',failed);$('#homeBackendDetail').textContent='API Exolus tidak dapat dijangkau.';$('#lastChecked').textContent='Pemeriksaan gagal: '+e.message;}finally{if(btn){btn.disabled=false;btn.classList.remove('is-loading');btn.textContent='⟳ Periksa ulang'}if(checked){checked.classList.remove('is-checking')}}}
 $('#refreshStatus').addEventListener('click',refreshBackendStatus);refreshBackendStatus();
 
 const historySvg = document.querySelector('#page-home [data-goto="history"] .card-icon svg');
@@ -920,12 +923,22 @@ $('#saveClientIdBtn').addEventListener('click', () => {
   alert('Google Client ID berhasil disimpan! Silakan klik tombol "Sign in with Google".');
 });
 
+const savedBackendUrl = localStorage.getItem('hermes-backend-url') || '';
+if (savedBackendUrl) { $('#backendApiUrlInput').value = savedBackendUrl; }
+$('#saveBackendApiUrlBtn')?.addEventListener('click', () => {
+  const u = $('#backendApiUrlInput').value.trim();
+  localStorage.setItem('hermes-backend-url', u);
+  alert('Backend API URL berhasil disimpan!');
+  refreshBackendStatus();
+  checkTokenStatus();
+});
+
 async function loginAsDeveloperEmail(email) {
   const statusEl = $('#tokenStatusText');
   $('#gameGoogleModal').classList.add('hidden');
   if (statusEl) statusEl.innerHTML = `<span class="muted">Masuk sebagai ${email}...</span>`;
   try {
-    const r = await fetch('/api/auth/google', {
+    const r = await apiFetch('/api/auth/google', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
