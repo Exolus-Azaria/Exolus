@@ -1,0 +1,15 @@
+exclude:
+  - server.js
+  - start.sh
+  - start-all.sh
+  - start-background.sh
+  - start-tunnel.sh
+  - status-background.sh
+  - stop-background.sh
+  - install-boot.sh
+  - labels-check.js
+  - HYBRID_ROADMAP.md
+  - design.md
+  - README.txt
+  - CHANGELOG_STATUS_SYNC.txt
+  - .gitignore
