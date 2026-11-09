@@ -512,7 +512,9 @@ $('#resetBg').addEventListener('click',()=>{clearBg();$('#bgType').value='defaul
 function tick(){let tz=$('#tz').value,now=new Date();let parts=new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(now).reduce((o,p)=>(o[p.type]=p.value,o),{});$('#timeMain').textContent=`${parts.hour}:${parts.minute}`;$('#timeSeconds').textContent=parts.second;let hour=Number(parts.hour);$('#timePeriod').textContent=hour>=4&&hour<11?'Pagi':hour>=11&&hour<15?'Siang':hour>=15&&hour<18?'Sore':'Malam';$('#date').textContent=new Intl.DateTimeFormat('id-ID',{timeZone:tz,weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(now);$('#location').textContent=$('#locLabel').value;$('#zoneBadge').textContent=(tz==='Asia/Pontianak'||tz==='Asia/Jakarta'?'WIB · UTC+7':tz==='Asia/Makassar'?'WITA · UTC+8':'WIT · UTC+9')}
 setInterval(tick,1000);$('#saveLocation').addEventListener('click',()=>{localStorage.setItem('hermes-tz',$('#tz').value);localStorage.setItem('hermes-loc',$('#locLabel').value);tick()});
 function addFileList(input,output){$(input).addEventListener('change',e=>{let el=$(output);el.innerHTML='';[...e.target.files].forEach(f=>{let d=document.createElement('div');d.className='file-item';d.textContent=f.name+' · '+(f.size/1024/1024).toFixed(2)+' MB';el.appendChild(d)})})}addFileList('#collegeFiles','#collegeFileList');addFileList('#generalFiles','#generalFileList');
-let history=JSON.parse(localStorage.getItem('hermes-demo-history')||'[]');history.slice(-30).forEach(m=>{if(m&&typeof m.text==='string')addBubble(m.role==='Minnie'?'MINNIE':'KAMU',m.text,m.role==='Minnie'?'':'user')});function renderHistory(){let el=$('#historyList');el.innerHTML='';if(!history.length){el.innerHTML='<div class="file-item">Belum ada pesan tersimpan.</div>';return}history.slice().reverse().forEach(m=>{let d=document.createElement('div');d.className='file-item';d.textContent=m.role+': '+m.text;el.appendChild(d)})}
+let history=JSON.parse(localStorage.getItem('hermes-demo-history')||'[]');
+function saveHistory(){if(history.length>50)history=history.slice(-50);localStorage.setItem('hermes-demo-history',JSON.stringify(history));}
+history.slice(-30).forEach(m=>{if(m&&typeof m.text==='string')addBubble(m.role==='Minnie'?'MINNIE':'KAMU',m.text,m.role==='Minnie'?'':'user')});function renderHistory(){let el=$('#historyList');el.innerHTML='';if(!history.length){el.innerHTML='<div class="file-item">Belum ada pesan tersimpan.</div>';return}history.slice().reverse().forEach(m=>{let d=document.createElement('div');d.className='file-item';d.textContent=m.role+': '+m.text;el.appendChild(d)})}
 function getUiToken(promptIfMissing=true){
   let t=localStorage.getItem('hermes-ui-token');
   if(!t && promptIfMissing){
@@ -634,7 +636,7 @@ async function sendToHermes(text,attachments=[]){
     displayUserText+='\n[Lampiran: '+attachments.map(a=>a.originalName||a.filename).join(', ')+']';
   }
   history.push({role:'Kamu',text:displayUserText});
-  localStorage.setItem('hermes-demo-history',JSON.stringify(history));
+  saveHistory();
   addBubble('KAMU',displayUserText,'user');
   let waitingHolder=addBubble('MINNIE','Sedang memproses permintaan…');
   renderHistory();
@@ -653,7 +655,7 @@ async function sendToHermes(text,attachments=[]){
       }
       waitingHolder.content.innerHTML = formatReply(reply);
       history.push({role:'Minnie',text:reply});
-      localStorage.setItem('hermes-demo-history',JSON.stringify(history));
+      saveHistory();
       renderHistory();
     }, 600);
     return;
@@ -679,7 +681,7 @@ async function sendToHermes(text,attachments=[]){
     const replyText=data.reply||'(Hermes tidak mengembalikan teks.)';
     waitingHolder.content.innerHTML=formatReply(replyText);
     history.push({role:'Minnie',text:replyText});
-    localStorage.setItem('hermes-demo-history',JSON.stringify(history));
+    saveHistory();
     renderHistory();
   }catch(err){
     clearInterval(timer);
@@ -687,7 +689,7 @@ async function sendToHermes(text,attachments=[]){
     let fallbackText = `Halo! Backend lokal belum terhubung (${err.message}). Minnie tetap siap membantumu dalam mode asisten mandiri.`;
     waitingHolder.content.innerHTML = formatReply(fallbackText);
     history.push({role:'Minnie',text:fallbackText});
-    localStorage.setItem('hermes-demo-history',JSON.stringify(history));
+    saveHistory();
     renderHistory();
   }
 }
