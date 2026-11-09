@@ -34,7 +34,9 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:28px 0 10px}
 /* Exolus v2.2.4: subtle futuristic motion and live connection indicators */
 @keyframes exolusGlow{0%,100%{box-shadow:0 0 0 rgba(54,201,255,0)}50%{box-shadow:0 0 24px rgba(54,201,255,.08)}}
 @keyframes exolusRise{from{opacity:.72;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.hero{animation:exolusGlow 7s ease-in-out infinite}.card,.panel{transition:border-color .2s ease,background .2s ease,box-shadow .2s ease}.card:hover,.panel:hover{box-shadow:0 10px 32px rgba(0,0,0,.13)}.page:not(.hidden){animation:exolusRise .22s ease-out}.status-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);border-radius:999px;padding:5px 9px;font-size:12px;white-space:nowrap}.status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 9px currentColor}.status-pill.good{color:#47e4a5;border-color:rgba(71,228,165,.25)}.status-pill.bad{color:#ff7585;border-color:rgba(255,117,133,.25)}.status-pill.wait{color:#ffd27a;border-color:rgba(255,210,122,.25)}.status-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:8px 0 16px}.status-card-title{display:flex;align-items:center;gap:8px}.status-detail{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.status-row b{font-size:12px}.btn:focus-visible,.nav:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.hero{animation:exolusGlow 7s ease-in-out infinite}.card,.panel{transition:border-color .2s ease,background .2s ease,box-shadow .2s ease}.card:hover,.panel:hover{box-shadow:0 10px 32px rgba(0,0,0,.13)}.page:not(.hidden){animation:exolusRise .22s ease-out}
+@keyframes minniePulse { 0%, 100% { opacity: 0.65; transform: scale(1); } 50% { opacity: 1; transform: scale(1.01); } }
+.bubble.waiting-bubble { animation: minniePulse 1.2s ease-in-out infinite; border-color: var(--accent); }.status-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);border-radius:999px;padding:5px 9px;font-size:12px;white-space:nowrap}.status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 9px currentColor}.status-pill.good{color:#47e4a5;border-color:rgba(71,228,165,.25)}.status-pill.bad{color:#ff7585;border-color:rgba(255,117,133,.25)}.status-pill.wait{color:#ffd27a;border-color:rgba(255,210,122,.25)}.status-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:8px 0 16px}.status-card-title{display:flex;align-items:center;gap:8px}.status-detail{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.status-row b{font-size:12px}.btn:focus-visible,.nav:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 /* Theme-aware components: all UI surfaces follow the selected palette. */
@@ -495,7 +497,7 @@ purple:{accent:'#bd83ff',accent2:'#ff6ac6',text:'#fbf2ff',muted:'#cbb8d8',bg:'#1
 green:{accent:'#4bffad',accent2:'#20c9a6',text:'#eafff4',muted:'#b0d6c4',bg:'#061610',panel:'rgba(8,29,22,.95)',panel2:'rgba(13,45,34,.94)',sidebar:'rgba(3,17,12,.98)',border:'rgba(75,255,173,.35)',input:'#092219',hero1:'rgba(4,23,16,.96)',hero2:'rgba(10,54,39,.9)'},
 red:{accent:'#ff596e',accent2:'#ff9c65',text:'#fff0f0',muted:'#dfbfc3',bg:'#19090d',panel:'rgba(39,14,20,.95)',panel2:'rgba(58,20,28,.94)',sidebar:'rgba(20,7,11,.98)',border:'rgba(255,89,110,.38)',input:'#260e14',hero1:'rgba(29,8,14,.96)',hero2:'rgba(68,20,30,.9)'},
 orange:{accent:'#ffb454',accent2:'#ff6e55',text:'#fff6e9',muted:'#dfc8a9',bg:'#1b1007',panel:'rgba(43,25,11,.95)',panel2:'rgba(62,34,15,.94)',sidebar:'rgba(24,13,5,.98)',border:'rgba(255,180,84,.38)',input:'#2a190b',hero1:'rgba(32,17,6,.96)',hero2:'rgba(72,37,12,.9)'},
-white:{accent:'#315fbd',accent2:'#6554bd',text:'#17243a',muted:'#52627a',bg:'#edf2fa',panel:'rgba(255,255,255,.96)',panel2:'rgba(235,241,251,.98)',sidebar:'rgba(248,250,255,.98)',border:'rgba(71,100,151,.25)',input:'#ffffff',hero1:'rgba(255,255,255,.97)',hero2:'rgba(226,235,250,.96)'}
+white:{accent:'#2551bb',accent2:'#5642b5',text:'#0b1324',muted:'#3b4963',bg:'#e6edf8',panel:'rgba(255,255,255,.98)',panel2:'rgba(228,238,252,.98)',sidebar:'rgba(243,246,253,.98)',border:'rgba(37,81,187,.3)',input:'#ffffff',hero1:'rgba(255,255,255,.98)',hero2:'rgba(216,229,248,.96)'}
 };
 function applyTheme(v){let c=palettes[v]||palettes.blue;if(v==='custom'){let accent=$('#customColor').value;c={...palettes.blue,accent,accent2:accent}};const root=document.documentElement;Object.entries(c).forEach(([k,val])=>root.style.setProperty('--'+k,val));root.dataset.theme=v;localStorage.setItem('hermes-theme',v)}
 $('#theme').addEventListener('change',e=>applyTheme(e.target.value));$('#customColor').addEventListener('input',()=>{if($('#theme').value==='custom')applyTheme('custom')});
@@ -639,6 +641,7 @@ async function sendToHermes(text,attachments=[]){
   saveHistory();
   addBubble('KAMU',displayUserText,'user');
   let waitingHolder=addBubble('MINNIE','Sedang memproses permintaan…');
+  waitingHolder.bubble.classList.add('waiting-bubble');
   renderHistory();
   
   let isGitHubPages = window.location.hostname.includes('github.io');
@@ -653,6 +656,7 @@ async function sendToHermes(text,attachments=[]){
       if (text.toLowerCase().includes('halo') || text.toLowerCase().includes('hai')) {
         reply = `Halo juga! Ada yang ingin kita bahas hari ini, ${localStorage.getItem('hermes-google-account') || 'Teman'}?`;
       }
+      waitingHolder.bubble.classList.remove('waiting-bubble');
       waitingHolder.content.innerHTML = formatReply(reply);
       history.push({role:'Minnie',text:reply});
       saveHistory();
@@ -678,6 +682,7 @@ async function sendToHermes(text,attachments=[]){
     clearInterval(timer);
     let data=await r.json().catch(()=>({error:'Respons backend bukan JSON.'}));
     if(!r.ok)throw new Error(data.error||('HTTP '+r.status));
+    waitingHolder.bubble.classList.remove('waiting-bubble');
     const replyText=data.reply||'(Hermes tidak mengembalikan teks.)';
     waitingHolder.content.innerHTML=formatReply(replyText);
     history.push({role:'Minnie',text:replyText});
@@ -686,6 +691,7 @@ async function sendToHermes(text,attachments=[]){
   }catch(err){
     clearInterval(timer);
     // Fallback if backend is not running locally
+    waitingHolder.bubble.classList.remove('waiting-bubble');
     let fallbackText = `Halo! Backend lokal belum terhubung (${err.message}). Minnie tetap siap membantumu dalam mode asisten mandiri.`;
     waitingHolder.content.innerHTML = formatReply(fallbackText);
     history.push({role:'Minnie',text:fallbackText});
