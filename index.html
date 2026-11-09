@@ -98,14 +98,11 @@ input[type=file]::file-selector-button{background:color-mix(in srgb,var(--accent
 .status-mini{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--muted);line-height:1.45;overflow-wrap:anywhere}
 .status-mini .mini-symbol{color:var(--accent);flex-shrink:0;width:1.15em;height:1.15em;display:inline-flex;align-items:center;justify-content:center;vertical-align:-0.18em}
 .status-mini .mini-symbol svg{width:100%;height:100%;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.status-card:nth-child(1) h3{color:#55c9ff;text-shadow:0 0 12px rgba(85,201,255,.32);animation:hermesTitleGlow 5s ease-in-out infinite}
-.status-card:nth-child(2) h3{color:#b69aff;text-shadow:0 0 12px rgba(182,154,255,.32);animation:routerTitleGlow 5s ease-in-out infinite}
-.status-card:nth-child(3) h3{color:#43e4df;text-shadow:0 0 12px rgba(67,228,223,.32);animation:modelTitleGlow 5s ease-in-out infinite}
-.status-card:nth-child(4) h3{color:#69e6ae;text-shadow:0 0 12px rgba(105,230,174,.32);animation:backendTitleGlow 5s ease-in-out infinite}
-@keyframes hermesTitleGlow{0%,100%{text-shadow:0 0 5px rgba(85,201,255,.15)}50%{text-shadow:0 0 14px rgba(85,201,255,.65)}}
-@keyframes routerTitleGlow{0%,100%{text-shadow:0 0 5px rgba(182,154,255,.15)}50%{text-shadow:0 0 14px rgba(182,154,255,.65)}}
-@keyframes modelTitleGlow{0%,100%{text-shadow:0 0 5px rgba(67,228,223,.15)}50%{text-shadow:0 0 14px rgba(67,228,223,.65)}}
-@keyframes backendTitleGlow{0%,100%{text-shadow:0 0 5px rgba(105,230,174,.15)}50%{text-shadow:0 0 14px rgba(105,230,174,.65)}}
+.status-card h3{color:var(--accent);text-shadow:0 0 12px color-mix(in srgb,var(--accent) 32%,transparent);animation:exolusGlow 5s ease-in-out infinite}
+.status-card:nth-child(2) h3{color:var(--accent2);text-shadow:0 0 12px color-mix(in srgb,var(--accent2) 32%,transparent)}
+.status-card:nth-child(3) h3{color:var(--accent);text-shadow:0 0 12px color-mix(in srgb,var(--accent) 32%,transparent)}
+.status-card:nth-child(4) h3{color:var(--accent2);text-shadow:0 0 12px color-mix(in srgb,var(--accent2) 32%,transparent)}
+@keyframes exolusGlow{0%,100%{text-shadow:0 0 5px color-mix(in srgb,var(--accent) 15%,transparent)}50%{text-shadow:0 0 14px color-mix(in srgb,var(--accent) 65%,transparent)}}
 @media(prefers-reduced-motion:reduce){.status-card h3{animation:none!important}}
 @media(max-width:390px){.status-card{min-height:180px}.status-card .status-pill{font-size:10px;padding:5px 7px}.status-card h3{font-size:14px}}
 
@@ -114,12 +111,12 @@ input[type=file]::file-selector-button{background:color-mix(in srgb,var(--accent
 
 /* Status card: warna mengikuti tema aktif */
 .status-card h3 {
-  color: var(--accent) !important;
+  color: var(--accent);
   text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent);
 }
-.status-card:nth-child(2) h3 { color: var(--accent2) !important; }
-.status-card:nth-child(3) h3 { animation: exolusGlow 4.5s ease-in-out infinite; }
-.status-card:nth-child(4) h3 { animation: exolusGlow 5.5s ease-in-out infinite; }
+.status-card:nth-child(2) h3 { color: var(--accent2); }
+.status-card:nth-child(3) h3 { color: var(--accent); }
+.status-card:nth-child(4) h3 { color: var(--accent2); }
 
 @keyframes exolusGlow {
   0%,100% { text-shadow: 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent); }
