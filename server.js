@@ -21,7 +21,7 @@ catch (_) {
   fs.writeFileSync(TOKEN_FILE, token, { mode: 0o600, flag: 'wx' });
 }
 const MIME = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.json':'application/json; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.webp':'image/webp', '.ico':'image/x-icon' };
-function send(res, code, obj) { const body = JSON.stringify(obj); res.writeHead(code, { 'Content-Type':'application/json; charset=utf-8', 'Cache-Control':'no-store', 'X-Content-Type-Options':'nosniff' }); res.end(body); }
+function send(res, code, obj) { const body = JSON.stringify(obj); res.writeHead(code, { 'Content-Type':'application/json; charset=utf-8', 'Cache-Control':'no-store', 'X-Content-Type-Options':'nosniff', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, Authorization' }); res.end(body); }
 function authorized(req) { const h = req.headers.authorization || ''; const supplied = h.startsWith('Bearer ') ? h.slice(7) : ''; return supplied.length === token.length && crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(token)); }
 function readBody(req, limit = 25 * 1024 * 1024) {
   return new Promise((resolve, reject) => {
@@ -62,6 +62,15 @@ async function hermesStatus() {
   }
 }
 const server = http.createServer(async (req, res) => {
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'X-Content-Type-Options': 'nosniff'
+    });
+    return res.end();
+  }
   const url = new URL(req.url, `http://${req.headers.host || '127.0.0.1'}`);
   console.log('REQ:', req.method, url.pathname);
   if (req.method === 'GET' && url.pathname === '/api/status') {
@@ -111,6 +120,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
   if (url.pathname === '/api/upload' && req.method === 'POST') {
+    if (!authorized(req)) return send(res, 401, { error:'Token backend tidak valid.' });
     let body;
     try { body = await readBody(req, 25 * 1024 * 1024); }
     catch (e) { return send(res, 400, { error:e.message }); }
@@ -135,6 +145,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
   if (url.pathname === '/api/chat' && req.method === 'POST') {
+    if (!authorized(req)) return send(res, 401, { error:'Token backend tidak valid.' });
     let body; try { body = await readBody(req); } catch (e) { return send(res, 400, { error:e.message }); }
     const message = typeof body.message === 'string' ? body.message.trim() : '';
     if (!message) return send(res, 400, { error:'Pesan tidak boleh kosong.' });
