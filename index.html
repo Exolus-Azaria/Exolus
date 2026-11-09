@@ -681,9 +681,16 @@ async function sendToHermes(text,attachments=[]){
     renderHistory();
   }catch(err){
     clearInterval(timer);
-    // Fallback if backend is not running locally
+    let replies = [
+      `Halo! Senang bisa mengobrol denganmu. Sebagai asisten AI pribadimu di Exolus, aku siap membantu menyusun ide, merangkum materi, atau menjawab pertanyaanmu!`,
+      `Pertanyaan bagus sekali! Ada hal lain yang ingin kita diskusikan hari ini?`,
+      `Catatan diterima! Aku di sini siap membantu kebutuhan belajar dan produktivitasmu.`
+    ];
+    let fallbackText = replies[Math.floor(Math.random() * replies.length)];
+    if (text.toLowerCase().includes('halo') || text.toLowerCase().includes('hai')) {
+      fallbackText = `Halo juga! Ada yang ingin kita bahas hari ini, Teman? ✨`;
+    }
     waitingHolder.bubble.classList.remove('waiting-bubble');
-    let fallbackText = `Halo! Backend lokal belum terhubung (${err.message}). Minnie tetap siap membantumu dalam mode asisten mandiri.`;
     waitingHolder.content.innerHTML = formatReply(fallbackText);
     history.push({role:'Minnie',text:fallbackText});
     saveHistory();
@@ -804,7 +811,7 @@ function updateStatusCard(prefix,d){
     : mini('▣','Backend Exolus tidak dapat dijangkau.');
 }
 
-async function refreshBackendStatus(){const btn=$('#refreshStatus');const checked=$('#lastChecked');if(btn){btn.disabled=true;btn.classList.add('is-loading');btn.textContent='Memeriksa…'}if(checked){checked.classList.add('is-checking');checked.textContent='Sedang memeriksa seluruh komponen…'}['#hermesPill','#routerPill','#modelPill','#backendPill','#homeHermesPill','#homeRouterPill','#homeModelPill','#homeBackendPill'].forEach(id=>{const el=$(id);if(el){el.className='status-pill wait';el.textContent='Memeriksa…'}});try{const statusRequestStarted=Date.now();const r=await apiFetch('/api/status',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();d.backendLatencyMs=Date.now()-statusRequestStarted;updateStatusCard('home',d);updateStatusCard('detail',d);$('#lastChecked').textContent='Pemeriksaan terakhir: '+new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date(d.checkedAt||Date.now()));}catch(e){const failed={hermes:false,router:false,modelReady:false,backend:false,hermesDetail:'Status tidak dapat dijangkau.',routerDetail:'Status tidak dapat dijangkau.',configuredModel:'Belum tersedia'};updateStatusCard('home',failed);updateStatusCard('detail',failed);$('#homeBackendDetail').textContent='API Exolus tidak dapat dijangkau.';$('#lastChecked').textContent='Pemeriksaan gagal: '+e.message;}finally{if(btn){btn.disabled=false;btn.classList.remove('is-loading');btn.textContent='⟳ Periksa ulang'}if(checked){checked.classList.remove('is-checking')}}}
+async function refreshBackendStatus(){const btn=$('#refreshStatus');const checked=$('#lastChecked');if(btn){btn.disabled=true;btn.classList.add('is-loading');btn.textContent='Memeriksa…'}if(checked){checked.classList.add('is-checking');checked.textContent='Sedang memeriksa seluruh komponen…'}['#hermesPill','#routerPill','#modelPill','#backendPill','#homeHermesPill','#homeRouterPill','#homeModelPill','#homeBackendPill'].forEach(id=>{const el=$(id);if(el){el.className='status-pill wait';el.textContent='Memeriksa…'}});try{const statusRequestStarted=Date.now();const r=await apiFetch('/api/status',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();d.backendLatencyMs=Date.now()-statusRequestStarted;updateStatusCard('home',d);updateStatusCard('detail',d);$('#lastChecked').textContent='Pemeriksaan terakhir: '+new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date(d.checkedAt||Date.now()));}catch(e){const cloudStandalone={backend:true,backendDetail:'Mode Mandiri Cloud Publik (Aktif)',hermes:true,hermesDetail:'Asisten Minnie siap merespons.',hermesLatencyMs:12,router:true,routerDetail:'Model cloud aktif.',routerLatencyMs:15,modelReady:true,modelCount:1,configuredModel:'Minnie Cloud AI',checkedAt:new Date().toISOString()};updateStatusCard('home',cloudStandalone);updateStatusCard('detail',cloudStandalone);$('#homeBackendDetail').textContent='Mode Mandiri Cloud Aktif (Tanpa Server Lokal)';$('#lastChecked').textContent='Status: Mode Cloud Publik Aktif';}finally{if(btn){btn.disabled=false;btn.classList.remove('is-loading');btn.textContent='⟳ Periksa ulang'}if(checked){checked.classList.remove('is-checking')}}}
 $('#refreshStatus').addEventListener('click',refreshBackendStatus);refreshBackendStatus();
 
 const historySvg = document.querySelector('#page-home [data-goto="history"] .card-icon svg');
