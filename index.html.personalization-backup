@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#071225"><title>Exolus — Personal Helper</title>
+<style>
+.ui-icon{display:inline-flex;align-items:center;justify-content:center;width:1.15em;height:1.15em;vertical-align:-.18em;color:var(--accent);flex:0 0 auto}.ui-icon svg{width:100%;height:100%;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.logo .ui-icon{width:25px;height:25px}.nav .ui-icon{width:22px;height:22px}.card-icon .ui-icon{width:25px;height:25px}.time-icon .ui-icon{width:21px;height:21px}.search .ui-icon{width:17px;height:17px}.btn .ui-icon{width:17px;height:17px}
+:root{--bg:#06101f;--panel:rgba(7,20,40,.94);--panel2:rgba(13,31,58,.92);--accent:#36c9ff;--accent2:#7668ff;--text:#edf6ff;--muted:#afc1d6;--border:rgba(82,166,255,.42);--sidebar:250px;--shade:.68}
+*{box-sizing:border-box}html{font-size:16px;scroll-behavior:auto;overflow-x:hidden}body{margin:0;min-height:100%;overflow-x:hidden;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;overscroll-behavior-y:auto}
+#wallpaper{position:fixed;inset:0;z-index:-2;pointer-events:none;background-image:linear-gradient(120deg,rgba(2,8,20,var(--shade)),rgba(2,8,20,.70)),var(--wallpaper);background-size:cover;background-position:center;background-repeat:no-repeat;transform:translateZ(0)}
+#wallpaper video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1}
+.app{min-height:100vh;display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);max-width:1920px;margin:auto}
+.sidebar{position:sticky;top:0;align-self:start;height:100dvh;overflow-y:auto;overscroll-behavior:contain;padding:22px 14px;border-right:1px solid var(--border);background:rgba(3,10,23,.97);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:5}
+.brand{display:flex;align-items:center;gap:12px;padding:8px 10px 24px;font-weight:900;letter-spacing:2px}.logo{width:42px;height:42px;border:1px solid var(--accent);border-radius:13px;display:grid;place-items:center;color:var(--accent);box-shadow:0 0 20px rgba(54,201,255,.18);flex-shrink:0;font-size:22px}.brand small{display:block;font-size:10px;color:var(--muted);letter-spacing:1.4px;font-weight:600}
+nav{display:grid;gap:8px}.nav{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:12px 13px;border:1px solid transparent;background:transparent;color:var(--muted);border-radius:13px;text-align:left;cursor:pointer;font:inherit;font-size:14px;white-space:nowrap}.nav .navicon{width:24px;display:inline-grid;place-items:center;font-size:19px;color:var(--accent);flex-shrink:0}.nav:hover,.nav.active{color:var(--text);background:linear-gradient(90deg,rgba(54,201,255,.13),rgba(118,104,255,.06));border-color:var(--border)}
+.sidebar-bottom{margin-top:28px;border:1px solid var(--border);border-radius:14px;padding:13px;background:var(--panel);font-size:12px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;background:#3ce4a3;border-radius:50%;margin-right:7px;box-shadow:0 0 10px #3ce4a3}
+main{padding:clamp(18px,2.4vw,38px);min-width:0;width:100%}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}.search{display:flex;align-items:center;gap:7px;flex:1;max-width:680px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px 16px;color:var(--muted)}
+.datetime{min-width:260px;border:1px solid var(--border);border-radius:17px;padding:12px 16px;background:linear-gradient(135deg,rgba(7,20,40,.97),rgba(14,32,60,.94));box-shadow:0 8px 24px rgba(0,0,0,.12);font-variant-numeric:tabular-nums}.time-line{display:flex;align-items:center;gap:10px}.time-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:rgba(54,201,255,.12);color:var(--accent);font-size:20px}.time-value{font-size:clamp(22px,2.2vw,30px);font-weight:800;letter-spacing:1px;line-height:1.2}.date-value{font-size:13px;color:var(--text);margin-top:8px}.place-value{font-size:12px;color:var(--muted);margin-top:3px;display:flex;gap:6px;align-items:center}.timezone{margin-left:auto;border:1px solid rgba(60,228,163,.32);border-radius:8px;padding:3px 7px;color:#64e7b4;font-size:11px;white-space:nowrap}
+.hero{min-height:220px;border:1px solid var(--border);border-radius:22px;padding:clamp(24px,3vw,42px);background:linear-gradient(110deg,rgba(3,12,29,.95),rgba(12,34,66,.78));position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:320px;height:320px;border:1px solid rgba(54,201,255,.3);border-radius:50%;right:-70px;top:-80px;box-shadow:0 0 70px rgba(54,201,255,.08),inset 0 0 60px rgba(54,201,255,.04);pointer-events:none}.eyebrow{color:var(--accent);letter-spacing:2px;font-size:11px;font-weight:800}.hero h1{font-size:clamp(30px,3.4vw,46px);line-height:1.15;margin:10px 0}.hero p{color:var(--muted);margin:0 0 20px;max-width:650px}.btn{border:1px solid var(--accent);border-radius:12px;background:linear-gradient(100deg,rgba(54,201,255,.17),rgba(118,104,255,.14));color:var(--text);padding:12px 17px;cursor:pointer;font-weight:750;font:inherit}.btn.secondary{border-color:var(--border);background:var(--panel2)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:18px}.card{border:1px solid var(--border);border-radius:17px;padding:21px;background:var(--panel);min-width:0;transition:border-color .15s ease,background .15s ease}.card[data-goto]{cursor:pointer}.card[data-goto]:hover{border-color:var(--accent);background:var(--panel2)}.card:active{transform:none}.card-head{display:flex;align-items:center;gap:12px}.card-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:rgba(54,201,255,.12);border:1px solid rgba(54,201,255,.2);color:var(--accent);font-size:23px;flex-shrink:0}.card h3{margin:0;font-size:16px}.card p{margin:12px 0 0;color:var(--muted);font-size:13px}.status-list{display:grid;gap:11px;margin-top:14px}.status-row{display:flex;justify-content:space-between;gap:12px;font-size:13px}.good{color:#47e4a5}.warning{color:#ffd27a}.section-title{margin:28px 0 10px;font-size:19px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px}.chatbox{display:flex;flex-direction:column;min-height:420px}.messages{flex:1;display:flex;flex-direction:column;gap:12px;padding:8px 0 18px}.bubble{max-width:88%;padding:12px 14px;border-radius:14px;background:var(--panel2);border:1px solid var(--border);overflow-wrap:anywhere}.bubble.user{align-self:flex-end;background:rgba(54,201,255,.13)}.composer{display:flex;gap:8px}.composer input{flex:1;min-width:0;border:1px solid var(--border);border-radius:12px;background:rgba(2,9,22,.9);color:var(--text);padding:13px;font:inherit}.muted{color:var(--muted)}.hidden{display:none!important}.panel{border:1px solid var(--border);border-radius:17px;background:var(--panel);padding:clamp(16px,2vw,24px);margin-bottom:16px;min-width:0}.panel h2{margin-top:0}.field{display:grid;gap:8px;margin:16px 0}.field label{font-size:14px;color:var(--muted)}input[type=text],input[type=url],select{width:100%;min-height:44px;padding:11px;border-radius:10px;border:1px solid var(--border);background:#08152a;color:var(--text);font:inherit}input[type=color]{width:48px;height:38px;border:0;background:transparent}input[type=range]{width:100%;accent-color:var(--accent)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.file-list{display:grid;gap:8px}.file-item{padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);font-size:13px;overflow-wrap:anywhere}.upload{border:1px dashed var(--border);border-radius:12px;padding:16px;text-align:center;color:var(--muted)}.notice{font-size:12px;color:var(--muted);line-height:1.6}
+/* Futuristic file-picker controls */
+input[type=file]{display:block;width:100%;min-width:0;color:var(--muted);font:inherit;font-size:13px;border:1px solid var(--border);border-radius:13px;padding:9px;background:linear-gradient(120deg,rgba(54,201,255,.07),rgba(118,104,255,.07));}
+input[type=file]::file-selector-button{appearance:none;border:1px solid var(--accent);border-radius:9px;padding:10px 14px;margin-right:12px;background:linear-gradient(110deg,rgba(54,201,255,.24),rgba(118,104,255,.2));color:var(--text);font:inherit;font-weight:750;cursor:pointer;box-shadow:inset 0 0 14px rgba(54,201,255,.06);transition:background .15s,border-color .15s,transform .15s}
+input[type=file]::file-selector-button:hover{background:linear-gradient(110deg,rgba(54,201,255,.38),rgba(118,104,255,.32));border-color:var(--accent2)}
+.file-control{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.file-control input[type=file]{flex:1 1 220px}.file-clear{border:1px solid var(--border);border-radius:10px;padding:9px 12px;background:rgba(255,89,110,.08);color:var(--text);font:inherit;font-size:12px;cursor:pointer}.file-clear:hover{border-color:#ff596e;background:rgba(255,89,110,.16)}
+.nav .navicon svg,.card-icon svg,.page-icon{width:22px;height:22px;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.card-icon svg{width:25px;height:25px}.nav .navicon{color:var(--accent)}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:28px 0 10px}
+@media(min-width:1500px){:root{--sidebar:270px}.grid{gap:20px}.card{padding:24px}}
+@media(max-width:1100px){:root{--sidebar:220px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.search{max-width:420px}}
+@media(max-width:700px){.app{grid-template-columns:minmax(0,1fr)}.sidebar{position:sticky;top:0;height:auto;overflow:visible;padding:8px 10px;border-right:0;border-bottom:1px solid var(--border);backdrop-filter:none;-webkit-backdrop-filter:none}.brand{padding:3px 8px 9px}.brand .subtitle{display:none}nav{display:flex;overflow-x:auto;gap:7px;padding:0 0 3px;scrollbar-width:thin;overscroll-behavior-x:contain}.nav{width:auto;min-height:43px;gap:7px;padding:9px 12px;font-size:13px;flex-shrink:0}.nav .navicon{font-size:18px;width:auto}.nav .ui-icon{width:21px;height:21px}.sidebar-bottom{display:none}main{padding:13px}.topbar{align-items:stretch;flex-direction:column;gap:10px;margin-bottom:15px}.search{display:none}.datetime{width:100%;min-width:0;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:0 10px}.time-line{grid-column:1;grid-row:1}.date-value{grid-column:1/-1;margin-top:10px;font-size:13px}.place-value{grid-column:1/-1;flex-wrap:wrap}.timezone{grid-column:2;grid-row:1;align-self:center;margin:0}.hero{min-height:180px;padding:23px;border-radius:18px}.hero h1{font-size:clamp(26px,7vw,34px)}.hero p{font-size:14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.card{padding:14px;border-radius:15px}.card-head{align-items:center;gap:9px}.card-icon{width:40px;height:40px;border-radius:12px;font-size:21px}.card h3{font-size:14px;line-height:1.3}.card p{font-size:12px;margin-top:10px}.section-title{margin-top:22px}.panel{padding:15px}.btn{min-height:43px}.page h1{font-size:26px}}
+@media(max-width:390px){.grid{grid-template-columns:1fr}.nav{font-size:12px;padding:8px 10px}.datetime{padding:10px}.time-value{font-size:24px}.hero h1{font-size:25px}}
+
+/* Exolus v2.2.4: subtle futuristic motion and live connection indicators */
+@keyframes exolusGlow{0%,100%{box-shadow:0 0 0 rgba(54,201,255,0)}50%{box-shadow:0 0 24px rgba(54,201,255,.08)}}
+@keyframes exolusRise{from{opacity:.72;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.hero{animation:exolusGlow 7s ease-in-out infinite}.card,.panel{transition:border-color .2s ease,background .2s ease,box-shadow .2s ease}.card:hover,.panel:hover{box-shadow:0 10px 32px rgba(0,0,0,.13)}.page:not(.hidden){animation:exolusRise .22s ease-out}.status-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);border-radius:999px;padding:5px 9px;font-size:12px;white-space:nowrap}.status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 9px currentColor}.status-pill.good{color:#47e4a5;border-color:rgba(71,228,165,.25)}.status-pill.bad{color:#ff7585;border-color:rgba(255,117,133,.25)}.status-pill.wait{color:#ffd27a;border-color:rgba(255,210,122,.25)}.status-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:8px 0 16px}.status-card-title{display:flex;align-items:center;gap:8px}.status-detail{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.status-row b{font-size:12px}.btn:focus-visible,.nav:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Theme-aware components: all UI surfaces follow the selected palette. */
+:root{--muted:#afc1d6;--panel2:rgba(13,31,58,.92);--sidebar:rgba(3,10,23,.97);--input:#08152a;--hero1:rgba(3,12,29,.95);--hero2:rgba(12,34,66,.88)}
+.sidebar{background:var(--sidebar);border-color:var(--border)}
+.panel,.card,.sidebar-bottom,.search,.datetime{background:var(--panel);color:var(--text);border-color:var(--border)}
+.nav{color:var(--muted)}.nav:hover,.nav.active{color:var(--text);background:color-mix(in srgb,var(--accent) 13%,var(--panel));border-color:var(--border)}
+.nav .navicon,.logo,.card-icon,.time-icon{color:var(--accent)}
+.logo{border-color:var(--accent);box-shadow:0 0 20px color-mix(in srgb,var(--accent) 20%,transparent)}
+.hero{background:linear-gradient(110deg,var(--hero1),var(--hero2));color:var(--text)}
+.hero p,.card p,.field label,.muted,.notice,.place-value{color:var(--muted)}
+.card[data-goto]:hover{background:var(--panel2);border-color:var(--accent)}
+input[type=text],input[type=url],select,.composer input{background:var(--input);color:var(--text);border-color:var(--border)}
+input::placeholder{color:var(--muted)}
+.btn{color:var(--text);border-color:var(--accent)}.btn.secondary{background:var(--panel2);color:var(--text);border-color:var(--border)}
+.time-value{display:flex;align-items:flex-start;gap:3px;color:var(--text);font-variant-numeric:tabular-nums}.time-value sup{font-size:.5em;line-height:1.2;position:relative;top:.08em;letter-spacing:0;color:var(--accent);font-weight:750}.time-period{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.4px;margin-top:1px}
+.timezone{color:var(--accent);border-color:var(--border)}
+.status-pill.good{color:#087a50}.status-pill.bad{color:#b4233c}
+[data-theme="white"] .dot{background:#079b68;box-shadow:0 0 10px #079b68}
+[data-theme="white"] .hero:after{border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+button:focus-visible,[data-goto]:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+
+/* Exolus UI consistency fixes */
+.card:not([data-goto]){cursor:default}.card:not([data-goto]):hover{box-shadow:none;border-color:var(--border);background:var(--panel)}
+.nav,.btn,.file-clear{transition:background .16s ease,border-color .16s ease,color .16s ease}
+button:disabled{opacity:.62;cursor:wait}
+.datetime{background:var(--panel);color:var(--text)}
+.hero h1,.panel h1,.panel h2,.page h1,.card h3{color:var(--text)}
+.file-item{color:var(--text)}
+input[type=file]{background:var(--panel2);color:var(--text)}
+input[type=file]::file-selector-button{background:color-mix(in srgb,var(--accent) 18%,var(--panel));color:var(--text)}
+.file-clear{background:color-mix(in srgb,#d94b62 9%,var(--panel));color:var(--text)}
+[data-theme="white"] .hero{box-shadow:0 10px 28px rgba(29,49,82,.08)}
+[data-theme="white"] .datetime{box-shadow:0 8px 24px rgba(29,49,82,.08)}
+[data-theme="white"] .timezone{color:#315fbd;border-color:rgba(49,95,189,.28)}
+[data-theme="white"] .time-period{color:#315fbd}
+[data-theme="white"] .status-pill.good{color:#087a50}
+[data-theme="white"] .status-pill.bad{color:#b4233c}
+.time-value sup{font-size:.5em;vertical-align:super}
+
+
+.latency-info{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:5px;line-height:1.2;min-width:0}
+.latency-value{font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.latency-quality{font-size:7px;font-weight:600;letter-spacing:.35px}
+.latency-good{color:#22c55e}
+.latency-average{color:#eab308}
+.latency-low{color:#f97316}
+.latency-bad{color:#ef4444}
+
+
+/* Exolus Status Cards Redesign */
+.status-card{display:flex;flex-direction:column;min-width:0;min-height:190px;overflow:hidden}
+.status-card .card-head{min-width:0;align-items:flex-start}
+.status-card .card-head>div:last-child{min-width:0;flex:1}
+.status-card h3{font-size:15px;line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+.status-card .status-pill{max-width:100%;width:max-content;white-space:normal;line-height:1.25;font-size:11px;margin-top:5px}
+.status-card .status-detail{margin-top:auto;padding-top:15px;min-width:0;display:flex;flex-direction:column;gap:7px;line-height:1.45}
+.status-mini{display:block;font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.status-mini .mini-symbol{font-weight:800;margin-right:5px}
+.status-card:nth-child(1) h3{color:#55c9ff;text-shadow:0 0 12px rgba(85,201,255,.32);animation:hermesTitleGlow 5s ease-in-out infinite}
+.status-card:nth-child(2) h3{color:#b69aff;text-shadow:0 0 12px rgba(182,154,255,.32);animation:routerTitleGlow 5s ease-in-out infinite}
+.status-card:nth-child(3) h3{color:#43e4df;text-shadow:0 0 12px rgba(67,228,223,.32);animation:modelTitleGlow 5s ease-in-out infinite}
+.status-card:nth-child(4) h3{color:#69e6ae;text-shadow:0 0 12px rgba(105,230,174,.32);animation:backendTitleGlow 5s ease-in-out infinite}
+@keyframes hermesTitleGlow{0%,100%{text-shadow:0 0 5px rgba(85,201,255,.15)}50%{text-shadow:0 0 14px rgba(85,201,255,.65)}}
+@keyframes routerTitleGlow{0%,100%{text-shadow:0 0 5px rgba(182,154,255,.15)}50%{text-shadow:0 0 14px rgba(182,154,255,.65)}}
+@keyframes modelTitleGlow{0%,100%{text-shadow:0 0 5px rgba(67,228,223,.15)}50%{text-shadow:0 0 14px rgba(67,228,223,.65)}}
+@keyframes backendTitleGlow{0%,100%{text-shadow:0 0 5px rgba(105,230,174,.15)}50%{text-shadow:0 0 14px rgba(105,230,174,.65)}}
+@media(prefers-reduced-motion:reduce){.status-card h3{animation:none!important}}
+@media(max-width:390px){.status-card{min-height:180px}.status-card .status-pill{font-size:10px;padding:5px 7px}.status-card h3{font-size:14px}}
+
+
+/* === EXOLUS VISUAL UPDATE === */
+
+/* Status card: warna mengikuti tema aktif */
+.status-card h3 {
+  color: var(--accent) !important;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.status-card:nth-child(2) h3 { color: var(--accent2) !important; }
+.status-card:nth-child(3) h3 { animation: exolusGlow 4.5s ease-in-out infinite; }
+.status-card:nth-child(4) h3 { animation: exolusGlow 5.5s ease-in-out infinite; }
+
+@keyframes exolusGlow {
+  0%,100% { text-shadow: 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent); }
+  50% { text-shadow: 0 0 14px color-mix(in srgb,var(--accent) 65%,transparent); }
+}
+
+/* Status pill: warna teks dan garis mengikuti tema */
+.status-pill.good,
+.status-pill.bad,
+.status-pill.wait {
+  color: var(--accent) !important;
+  border-color: color-mix(in srgb,var(--accent) 42%,transparent) !important;
+  background: color-mix(in srgb,var(--accent) 9%,transparent);
+}
+
+/* Mini info: ringkas dan tetap mudah dibaca */
+.status-card .status-detail {
+  padding-top: 11px;
+  gap: 6px;
+}
+.status-mini {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.status-mini .mini-symbol {
+  color: var(--accent);
+  margin-right: 5px;
+}
+
+/* Latensi dalam satu baris */
+.latency-info {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-top: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.latency-value {
+  font-size: 14px;
+  font-weight: 700;
+}
+.latency-quality {
+  font-size: 5.5px;
+  font-weight: 700;
+  letter-spacing: .25px;
+}
+
+/* Kartu keamanan */
+.security-card {
+  margin-top: 18px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+.security-card .security-title {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.security-card .security-icon {
+  color: var(--accent);
+  animation: securityPulse 3s ease-in-out infinite;
+}
+.security-card .security-detail {
+  color: var(--muted);
+  line-height: 1.6;
+}
+.security-card .mini-symbol {
+  color: var(--accent);
+  font-weight: 800;
+  margin-right: 5px;
+}
+@keyframes securityPulse {
+  0%,100% { filter: drop-shadow(0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)); }
+  50% { filter: drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 75%,transparent)); }
+}
+
+/* Menu utama: teks dan ikon mengikuti tema */
+#page-home [data-goto] {
+  color: var(--text);
+}
+#page-home [data-goto] .card-icon {
+  color: var(--accent);
+  transform-origin: center;
+}
+/* Animasi ikon menu Exolus */
+#page-home [data-goto="chat"] .card-icon svg {
+  animation: chatBreath 3s ease-in-out infinite;
+}
+#page-home [data-goto="college"] .card-icon {
+  animation: menuTilt 4s ease-in-out infinite;
+}
+#page-home [data-goto="files"] .card-icon svg {
+  animation: none;
+}
+#page-home [data-goto="files"] .card-icon .folder-paper {
+  filter: drop-shadow(0 1px 1px color-mix(in srgb,var(--bg) 65%,transparent));
+  transform-box:view-box;
+  animation:folderPaperBounce 3.6s cubic-bezier(.34,1.56,.64,1) infinite;
+}
+#page-home [data-goto="files"] .card-icon .folder-back,
+#page-home [data-goto="files"] .card-icon .folder-door {
+  transform-box:view-box;
+  transform-origin:12px 19px;
+  animation:folderShellBounce 3.6s ease-in-out infinite;
+}
+@keyframes folderPaperBounce {
+  0%,12%,100% {transform:translateY(0);}
+  24% {transform:translateY(-7px);}
+  34% {transform:translateY(-5px);}
+  42% {transform:translateY(-6px);}
+  62% {transform:translateY(-6px);}
+  76% {transform:translateY(1px);}
+  84% {transform:translateY(-1px);}
+}
+@keyframes folderShellBounce {
+  0%,12%,100% {transform:translateY(0);}
+  24% {transform:translateY(1px);}
+  34% {transform:translateY(-.5px);}
+  42%,62% {transform:translateY(0);}
+  76% {transform:translateY(1px);}
+  84% {transform:translateY(-.5px);}
+}
+#page-home [data-goto="system"] .card-icon svg {
+  animation: none;
+}
+#page-home [data-goto="system"] .card-icon .router-wave {
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+  animation: routerSignal 2.8s ease-out infinite;
+}
+#page-home [data-goto="system"] .card-icon .wave-two {
+  animation-delay: 1.4s;
+}
+@keyframes routerSignal {
+  0%   { opacity: 0; transform: scale(.45); }
+  18%  { opacity: .3; transform: scale(.62); }
+  42%  { opacity: .6; transform: scale(.82); }
+  62%  { opacity: .85; transform: scale(1); }
+  72%  { opacity: 1; transform: scale(1.06); }
+  78%  { opacity: .85; transform: scale(1.02); }
+  86%  { opacity: .5; transform: scale(1.08); }
+  100% { opacity: 0; transform: scale(1.12); }
+}
+#page-home [data-goto="history"] .card-icon svg {
+  animation: none;
+}
+#page-home [data-goto="history"] .card-icon {
+  width: 44px;
+  height: 44px;
+}
+#page-home [data-goto="history"] .card-icon svg {
+  width: 30px;
+  height: 30px;
+}
+#page-home [data-goto="history"] .history-minute {
+  transform-origin: 12px 12px;
+  animation: historyMinute 3s linear infinite;
+}
+#page-home [data-goto="history"] .history-hour {
+  transform-origin: 12px 12px;
+  animation: historyHour 8s linear infinite;
+}
+#page-home [data-goto="settings"] .card-icon svg {
+  animation: settingsSparkle 5s ease-in-out infinite;
+}
+
+@keyframes chatBreath {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+@keyframes folderOpenClose {
+  0%,100% { transform: scaleY(1); }
+  35%,65% { transform: scaleY(.88); }
+}
+@keyframes routerWave {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .45; transform: scale(1.13); }
+}
+@keyframes historyArrow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+@keyframes historyMinute {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes historyHour {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes settingsSparkle {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes menuPulse {
+  0%,100% { transform: scale(1); filter: drop-shadow(0 0 1px var(--accent)); }
+  50% { transform: scale(1.06); filter: drop-shadow(0 0 7px var(--accent)); }
+}
+@keyframes menuTilt {
+  0%,100% { transform: rotate(0); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+@keyframes menuScan {
+  0%,100% { filter: drop-shadow(0 0 1px var(--accent)); }
+  50% { filter: drop-shadow(0 0 8px var(--accent)); }
+}
+@keyframes menuSignal {
+  to { transform: rotate(360deg); }
+}
+@keyframes menuClock {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+@keyframes menuGear {
+  to { transform: rotate(360deg); }
+}
+
+/* Tombol pemeriksaan dan animasi hasil */
+#refreshStatus.is-loading {
+  opacity: .8;
+  cursor: progress;
+}
+#refreshStatus.is-loading::before {
+  content: " ";
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 7px;
+  vertical-align: -1px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: refreshSpin .7s linear infinite;
+}
+@keyframes refreshSpin {
+  to { transform: rotate(360deg); }
+}
+#lastChecked {
+  transition: color .25s ease, opacity .25s ease;
+}
+#lastChecked.is-checking {
+  color: var(--accent);
+  animation: checkPulse 1.2s ease-in-out infinite;
+}
+@keyframes checkPulse {
+  50% { opacity: .55; }
+}
+
+/* Hormati pengaturan gerakan perangkat */
+@media (prefers-reduced-motion: reduce) {
+  .status-card h3,
+  .security-card .security-icon,
+  #page-home [data-goto] .card-icon,
+  #refreshStatus.is-loading::before,
+  #lastChecked.is-checking {
+    animation: none !important;
+  }
+}
+
+</style></head><body>
+<div id="wallpaper"></div><div class="app">
+<aside class="sidebar"><div class="brand"><div class="logo"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/></svg></span></div><div>EXOLUS<small class="subtitle">AI, MADE EASY</small></div></div>
+<nav>
+<button class="nav active" data-page="home"><span class="navicon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-7h6v7"/></svg></span></span>Beranda</button><button class="nav" data-page="chat"><span class="navicon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.5A2.5 2.5 0 0 1 4 13.5Z"/><circle cx="8" cy="10" r=".7"/><circle cx="12" cy="10" r=".7"/><circle cx="16" cy="10" r=".7"/></svg></span></span>Chat AI</button><button class="nav" data-page="college"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></span>Kuliah</button><button class="nav" data-page="files"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/><path d="M3 9h18"/></svg></span>File Manager</button><button class="nav" data-page="system"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z" transform="translate(-1 -1) scale(1.08)"/></svg></span>Model & Router</button><button class="nav" data-page="history"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span>Riwayat</button><button class="nav" data-page="settings"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15.1a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.8.1 1.7 1.7 0 0 0-.9 1.5v.2h-3.4v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8-.1l-.2.1-1.7-2.9.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H6v-3.4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L9 4.8l.2.1a1.7 1.7 0 0 0 1.8-.1 1.7 1.7 0 0 0 .9-1.5v-.2h3.4v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8.1l.2-.1 1.7 2.9-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.2V14h-.2a1.7 1.7 0 0 0-1.7 1.1Z" transform="translate(-1 -1) scale(1.08)"/></svg></span>Pengaturan</button>
+</nav><div class="sidebar-bottom"><span class="dot"></span><b>Exolus siap</b><p>Periksa status Hermes Agent dan 9Router pada menu Model &amp; Router.</p></div></aside>
+<main><div class="topbar"><div class="search" aria-label="Ruang kerja Exolus"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></span> &nbsp; Ruang kerja Exolus</div><div class="datetime"><div class="time-line"><div class="time-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div><div><div class="time-value" id="time"><span id="timeMain">--:--</span><sup id="timeSeconds">--</sup></div><div class="time-period" id="timePeriod">Memuat…</div></div></div><div class="date-value" id="date">Memuat tanggal…</div><div class="place-value"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span id="location">Pontianak, Kalimantan Barat</span><span class="timezone" id="zoneBadge">WIB · UTC+7</span></div></div></div>
+<section id="page-home" class="page"><div class="hero"><div class="eyebrow">YOUR PERSONAL AI SYSTEM</div><h1>Selamat datang di Exolus</h1><p>Ruang kerja AI pribadi dengan nuansa game futuristik.</p><button class="btn" data-goto="chat"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.5A2.5 2.5 0 0 1 4 13.5Z"/><circle cx="8" cy="10" r=".7"/><circle cx="12" cy="10" r=".7"/><circle cx="16" cy="10" r=".7"/></svg></span> &nbsp; Mulai Chat <span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></div>
+<div class="grid">
+<div class="card" data-goto="chat"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.5A2.5 2.5 0 0 1 4 13.5Z"/><circle cx="8" cy="10" r=".7"/><circle cx="12" cy="10" r=".7"/><circle cx="16" cy="10" r=".7"/></svg></span></div><h3>Chat AI</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.5A2.5 2.5 0 0 1 4 13.5Z"/><circle cx="8" cy="10" r=".7"/><circle cx="12" cy="10" r=".7"/><circle cx="16" cy="10" r=".7"/></svg></span> Kenalkan Minnie, asisten AI pribadimu.</p></div>
+<div class="card" data-goto="college"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></div><h3>Mode Kuliah</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></span> Kelola materi, foto, video, dan dokumen.</p></div>
+<div class="card" data-goto="files"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true">
+  <path class="folder-back" d="M2.8 8V5.7A1.7 1.7 0 0 1 4.5 4h5l1.8 2h8.2A1.7 1.7 0 0 1 21.2 7.7V18H2.8Z" fill="#071629" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+  <g class="folder-paper">
+    <g class="paper-one">
+      <path d="M4.2 7.5h5.2v9H4.2z" fill="color-mix(in srgb,var(--accent) 14%,var(--panel2))" stroke="var(--accent)" stroke-opacity=".55" stroke-width=".55"/>
+      <path d="M5.1 10h3.2M5.1 12h3.2M5.1 14h2.5" stroke="var(--accent)" stroke-opacity=".6" stroke-width=".45"/>
+    </g>
+    <g class="paper-two">
+      <path d="M9.4 6.5h5.2v10H9.4z" fill="color-mix(in srgb,var(--accent) 18%,var(--panel2))" stroke="var(--accent)" stroke-opacity=".65" stroke-width=".6"/>
+      <path d="M10.3 9h3.2M10.3 11h3.2M10.3 13h2.5" stroke="var(--accent)" stroke-opacity=".65" stroke-width=".45"/>
+    </g>
+    <g class="paper-three">
+      <path d="M14.6 7.5h5.2v9h-5.2z" fill="color-mix(in srgb,var(--accent) 12%,var(--panel))" stroke="var(--accent)" stroke-opacity=".5" stroke-width=".55"/>
+      <path d="M15.5 10h3.2M15.5 12h3.2M15.5 14h2.5" stroke="var(--accent)" stroke-opacity=".55" stroke-width=".45"/>
+    </g>
+  </g>
+  <path class="folder-door" d="M2.8 8.5h18.4v9.2a1.5 1.5 0 0 1-1.5 1.5H4.3a1.5 1.5 0 0 1-1.5-1.5Z" fill="#071629" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+</svg></div><h3>File Manager</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/><path class="folder-base" d="M4.5 19.5h15"/></svg></span> Pilih file lokal untuk materi belajar.</p></div>
+<div class="card" data-goto="system"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="3"/><path class="router-wave wave-one" d="M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/><path class="router-wave wave-two" d="M8 8a5.5 5.5 0 0 0 0 8M16 8a5.5 5.5 0 0 1 0 8"/></svg></span></div><h3>Model & Router</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="2.2"/><path d="M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14M8 8a5.5 5.5 0 0 0 0 8M16 8a5.5 5.5 0 0 1 0 8"/></svg></span> Memantau koneksi model dan layanan router.</p></div>
+<div class="card" data-goto="history"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true">
+<defs>
+  <path id="historyTrack" pathLength="100"
+        d="M12 4.5A7.5 7.5 0 0 0 12 19.5A7.5 7.5 0 0 0 12 4.5"/>
+</defs>
+<path class="history-trail" fill="none" d=""/>
+<g class="history-head" fill="none">
+  <path d="M-1.5 -1.5 1.5 0 -1.5 1.5"
+        stroke="currentColor" stroke-width="1.35"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+</g>
+<g class="history-minute"><path d="M12 12V5"/></g>
+<g class="history-hour"><path d="M12 12 8 9"/></g>
+<circle cx="12" cy="12" r=".8" fill="currentColor"/>
+</svg></div><h3>Riwayat</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span> Riwayat Minnie tersimpan di browser ini.</p></div>
+<div class="card" data-goto="settings"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15.1a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.8.1 1.7 1.7 0 0 0-.9 1.5v.2h-3.4v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8-.1l-.2.1-1.7-2.9.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H6v-3.4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L9 4.8l.2.1a1.7 1.7 0 0 0 1.8-.1 1.7 1.7 0 0 0 .9-1.5v-.2h3.4v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8.1l.2-.1 1.7 2.9-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.2V14h-.2a1.7 1.7 0 0 0-1.7 1.1Z" transform="translate(-1 -1) scale(1.08)"/></svg></div><h3>Personalisasi</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/></svg></span> Ubah tema, background, dan lokasi waktu.</p></div></div>
+<h2 class="section-title"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span> Status Sistem</h2>
+<div class="grid">
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M8 12h.01M16 12h.01M8 16h8M2 11v5M22 11v5"/></svg></span></div><div><h3>Hermes Agent</h3><div id="homeHermesPill" class="status-pill wait">Menunggu pemeriksaan</div></div></div><p id="homeHermesDetail" class="status-detail">Memeriksa layanan Hermes.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span></div><div><h3>9Router</h3><div id="homeRouterPill" class="status-pill wait">Menunggu pemeriksaan</div></div></div><p id="homeRouterDetail" class="status-detail">Memeriksa koneksi API.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 5a3 3 0 0 0-5.7-1.3A3.5 3.5 0 0 0 4 10a3.5 3.5 0 0 0 .7 6.5A3.5 3.5 0 0 0 12 18Z"/><path d="M12 5a3 3 0 0 1 5.7-1.3A3.5 3.5 0 0 1 20 10a3.5 3.5 0 0 1-.7 6.5A3.5 3.5 0 0 1 12 18ZM8 9h2M14 13h2M12 5v15"/></svg></span></div><div><h3>Model AI</h3><div id="homeModelPill" class="status-pill wait">Menunggu pemeriksaan</div></div></div><p id="homeModelDetail" class="status-detail">Menunggu kesiapan layanan AI.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01M11 7h6M11 17h6"/></svg></span></div><div><h3>Exolus Backend</h3><div id="homeBackendPill" class="status-pill wait">Menunggu pemeriksaan</div></div></div><p id="homeBackendDetail" class="status-detail">Memeriksa server dan API lokal.</p></div>
+</div></section>
+<section id="page-chat" class="page hidden"><h1>◉ Minnie AI</h1><p class="muted">Tanyakan apa saja, cari ide, dan selesaikan kebutuhanmu bersama Minnie.</p><div class="panel chatbox"><div class="messages" id="messages"><div class="bubble"><b>MINNIE</b><br>Hai! Aku Minnie, asisten AI kamu. Mau kita kerjakan apa hari ini?</div></div><form id="chatForm" class="composer"><input id="chatInput" type="text" placeholder="Tulis pesan untuk Minnie..." required autocomplete="off"><button class="btn">Kirim <span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></form></div></section>
+<section id="page-college" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></span> Mode Kuliah</h1><p class="muted">Tanyakan materi, bahas soal, dan susun ide tugas kuliah.</p><div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/></svg></span> Tanya tentang kuliah</h2><div class="field"><label>Mata kuliah / topik</label><input id="subject" type="text" placeholder="Contoh: Matematika Diskrit, Sistem Komputer"></div><div class="field"><label>Pertanyaan</label><input id="question" type="text" placeholder="Tulis pertanyaan atau instruksi belajar"></div><button class="btn" id="askCollege">Siapkan pertanyaan</button><p class="notice">Pertanyaanmu akan dibuka di Chat AI bersama Minnie.</p></div><div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m8 12.5 6.8-6.8a3 3 0 0 1 4.2 4.2l-8.5 8.5a5 5 0 0 1-7.1-7.1l8.2-8.2"/></svg></span> Materi kuliah</h2><div class="upload"><input id="collegeFiles" type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.txt,.xlsx,.csv"><p>Pilih foto, video, PDF, dokumen, presentasi, atau file data.</p></div><div id="collegeFileList" class="file-list"></div><p class="notice">Pilih file untuk melihat nama dan ukurannya. File belum diunggah.</p></div></section>
+<section id="page-files" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/><path d="M3 9h18"/></svg></span> File Manager</h1><div class="panel"><h2>Pilih file lokal</h2><input id="generalFiles" type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.txt,.xlsx,.csv"><div id="generalFileList" class="file-list" style="margin-top:12px"></div><p class="notice">Saat ini file hanya ditampilkan sebagai nama dan ukuran. Pengunggahan dan analisis file oleh AI belum diaktifkan.</p></div></section>
+<section id="page-system" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span> Model &amp; Router</h1><p class="muted">Status diperiksa langsung dari Termux. Indikator tidak akan dianggap terhubung sebelum pemeriksaan berhasil.</p><div class="status-actions"><span id="lastChecked" class="status-detail">Belum diperiksa</span><button class="btn secondary" id="refreshStatus" type="button">⟳ Periksa ulang</button></div><div class="grid">
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M8 12h.01M16 12h.01M8 16h8M2 11v5M22 11v5"/></svg></span></div><div><h3>Hermes Agent</h3><div id="hermesPill" class="status-pill wait">Belum diperiksa</div></div></div><p id="hermesDetail" class="status-detail">Menunggu pemeriksaan perintah hermes status.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span></div><div><h3>9Router</h3><div id="routerPill" class="status-pill wait">Belum diperiksa</div></div></div><p id="routerDetail" class="status-detail">Memeriksa respons API dan daftar model.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 5a3 3 0 0 0-5.7-1.3A3.5 3.5 0 0 0 4 10a3.5 3.5 0 0 0 .7 6.5A3.5 3.5 0 0 0 12 18Z"/><path d="M12 5a3 3 0 0 1 5.7-1.3A3.5 3.5 0 0 1 20 10a3.5 3.5 0 0 1-.7 6.5A3.5 3.5 0 0 1 12 18ZM8 9h2M14 13h2M12 5v15"/></svg></span></div><div><h3>Model AI</h3><div id="modelPill" class="status-pill wait">Menunggu</div></div></div><p id="modelDetail" class="status-detail">Model akan ditampilkan setelah pemeriksaan status.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01M11 7h6M11 17h6"/></svg></span></div><div><h3>Exolus Backend</h3><div id="backendPill" class="status-pill wait">Menunggu</div></div></div><p id="backendDetail" class="status-detail">Status server dan API lokal Exolus.</p></div>
+</div><div class="panel security-card"><h2 class="security-title"><span class="ui-icon security-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3"/></svg></span> Keamanan koneksi</h2><p class="notice security-detail"><span class="mini-symbol">⬡</span>Hermes Agent dan 9Router diperiksa dari backend lokal. Jangan membuka port 20128 atau 18765 langsung ke internet. Untuk akses HTTPS dari luar HP, gunakan tunnel HTTPS dengan token acak panjang; domain Vex permanen memerlukan domain milikmu dan konfigurasi DNS.</p></div></section>
+<section id="page-history" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span> Riwayat</h1><div class="panel"><p class="muted">Temukan kembali percakapan yang tersimpan di perangkat ini.</p><div id="historyList" class="file-list"><div class="file-item">Belum ada pesan tersimpan.</div></div><button class="btn secondary" id="clearHistory">Hapus riwayat</button></div></section>
+<section id="page-settings" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 1.4-3.4 1.5 1.5 0 0 1 1.1-2.6H18a3 3 0 0 0 3-3c0-5-4-9-9-9Z"/><circle cx="7.5" cy="10" r="1"/><circle cx="11" cy="6.5" r="1"/><circle cx="16" cy="8" r="1"/></svg></span> Pengaturan Tampilan</h1><div class="panel"><h2>Tema Warna</h2><div class="field"><label>Pilih preset</label><select id="theme"><option value="blue">Cyber Blue</option><option value="purple">Phantom Purple</option><option value="green">Matrix Green</option><option value="red">Crimson Red</option><option value="orange">Solar Orange</option><option value="white">Minimal White</option><option value="custom">Custom Color</option></select></div><div class="field"><label>Warna aksen kustom</label><div class="row"><input type="color" id="customColor" value="#36c9ff"><span class="muted">Pilih warna utama UI</span></div></div></div>
+<div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg></span> Background</h2><div class="field"><label>Jenis background</label><select id="bgType"><option value="default">Bawaan futuristik</option><option value="photo">Foto / GIF dari perangkat</option><option value="video">Video dari perangkat</option><option value="url">URL gambar / GIF / video</option><option value="color">Warna polos</option></select></div><div class="field" id="bgPhotoField"><label>Foto atau GIF</label><div class="file-control"><input type="file" id="bgFile" accept="image/*,.gif"><button class="file-clear" type="button" id="clearPhoto">Batal pilih</button></div></div><div class="field hidden" id="bgVideoField"><label>Video</label><div class="file-control"><input type="file" id="videoFile" accept="video/*"><button class="file-clear" type="button" id="clearVideo">Batal pilih</button></div></div><div class="field hidden" id="bgUrlField"><label>URL gambar, GIF, atau video</label><input type="url" id="bgUrl" placeholder="https://contoh.com/background.jpg"><button class="file-clear" type="button" id="clearUrl">Hapus URL</button></div><div class="field"><label>Lapisan gelap: <span id="shadeLabel">68%</span></label><input id="shade" type="range" min="10" max="90" value="68"></div><div class="row"><button class="btn" id="applyBg">Terapkan background</button><button class="btn secondary" id="resetBg">Reset</button></div><p class="notice">Pilih satu jenis background, lalu terapkan. Kamu bisa mengatur tingkat gelap agar teks tetap terbaca.</p></div>
+<div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span> Waktu & Lokasi</h2><div class="field"><label>Zona waktu</label><select id="tz"><option value="Asia/Pontianak">Pontianak / Kalimantan Barat — WIB</option><option value="Asia/Jakarta">Jakarta — WIB</option><option value="Asia/Makassar">Makassar — WITA</option><option value="Asia/Jayapura">Jayapura — WIT</option></select></div><div class="field"><label>Label lokasi</label><input id="locLabel" type="text" value="Pontianak, Kalimantan Barat"></div><button class="btn" id="saveLocation">Simpan waktu & lokasi</button></div></section>
+<footer>EXOLUS · PERSONAL HELPER · MINNIE · v2.2.5.1</footer></main></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s),pages=['home','chat','college','files','system','history','settings'];
+function go(p){if(!pages.includes(p)||!$('#page-'+p))return;pages.forEach(x=>$('#page-'+x).classList.toggle('hidden',x!==p));$$('.nav').forEach(b=>{let active=b.dataset.page===p;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});window.scrollTo({top:0,behavior:'smooth'});}
+$$('[data-page]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));$$('[data-goto]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.goto)));
+const palettes={
+blue:{accent:'#36c9ff',accent2:'#7668ff',text:'#edf6ff',muted:'#afc1d6',bg:'#06101f',panel:'rgba(7,20,40,.94)',panel2:'rgba(13,31,58,.94)',sidebar:'rgba(3,10,23,.97)',border:'rgba(82,166,255,.42)',input:'#08152a',hero1:'rgba(3,12,29,.95)',hero2:'rgba(12,34,66,.88)'},
+purple:{accent:'#bd83ff',accent2:'#ff6ac6',text:'#fbf2ff',muted:'#cbb8d8',bg:'#10091e',panel:'rgba(30,16,48,.95)',panel2:'rgba(46,23,67,.94)',sidebar:'rgba(16,8,28,.98)',border:'rgba(189,131,255,.4)',input:'#1b102b',hero1:'rgba(22,10,38,.96)',hero2:'rgba(55,22,70,.9)'},
+green:{accent:'#4bffad',accent2:'#20c9a6',text:'#eafff4',muted:'#b0d6c4',bg:'#061610',panel:'rgba(8,29,22,.95)',panel2:'rgba(13,45,34,.94)',sidebar:'rgba(3,17,12,.98)',border:'rgba(75,255,173,.35)',input:'#092219',hero1:'rgba(4,23,16,.96)',hero2:'rgba(10,54,39,.9)'},
+red:{accent:'#ff596e',accent2:'#ff9c65',text:'#fff0f0',muted:'#dfbfc3',bg:'#19090d',panel:'rgba(39,14,20,.95)',panel2:'rgba(58,20,28,.94)',sidebar:'rgba(20,7,11,.98)',border:'rgba(255,89,110,.38)',input:'#260e14',hero1:'rgba(29,8,14,.96)',hero2:'rgba(68,20,30,.9)'},
+orange:{accent:'#ffb454',accent2:'#ff6e55',text:'#fff6e9',muted:'#dfc8a9',bg:'#1b1007',panel:'rgba(43,25,11,.95)',panel2:'rgba(62,34,15,.94)',sidebar:'rgba(24,13,5,.98)',border:'rgba(255,180,84,.38)',input:'#2a190b',hero1:'rgba(32,17,6,.96)',hero2:'rgba(72,37,12,.9)'},
+white:{accent:'#315fbd',accent2:'#6554bd',text:'#17243a',muted:'#52627a',bg:'#edf2fa',panel:'rgba(255,255,255,.96)',panel2:'rgba(235,241,251,.98)',sidebar:'rgba(248,250,255,.98)',border:'rgba(71,100,151,.25)',input:'#ffffff',hero1:'rgba(255,255,255,.97)',hero2:'rgba(226,235,250,.96)'}
+};
+function applyTheme(v){let c=palettes[v]||palettes.blue;if(v==='custom'){let accent=$('#customColor').value;c={...palettes.blue,accent,accent2:accent}};const root=document.documentElement;Object.entries(c).forEach(([k,val])=>root.style.setProperty('--'+k,val));root.dataset.theme=v;localStorage.setItem('hermes-theme',v)}
+$('#theme').addEventListener('change',e=>applyTheme(e.target.value));$('#customColor').addEventListener('input',()=>{if($('#theme').value==='custom')applyTheme('custom')});
+let videoEl=null,activeBgUrl=null;
+function clearBg(){if(videoEl){videoEl.pause?.();videoEl.removeAttribute('src');videoEl.load?.();videoEl.remove();videoEl=null}if(activeBgUrl){URL.revokeObjectURL(activeBgUrl);activeBgUrl=null}document.documentElement.style.setProperty('--wallpaper','none');$('#wallpaper').style.backgroundImage='linear-gradient(120deg,rgba(2,8,20,.68),rgba(2,8,20,.70))';$('#wallpaper').style.backgroundColor='transparent'}
+function updateBgFields(){let t=$('#bgType').value;$('#bgPhotoField').classList.toggle('hidden',t!=='photo');$('#bgVideoField').classList.toggle('hidden',t!=='video');$('#bgUrlField').classList.toggle('hidden',t!=='url');if(t!=='photo')$('#bgFile').value='';if(t!=='video')$('#videoFile').value='';if(t!=='url')$('#bgUrl').value=''}
+$('#bgType').addEventListener('change',updateBgFields);
+$('#clearPhoto').addEventListener('click',()=>{$('#bgFile').value='';if($('#bgType').value==='photo')clearBg()});$('#clearVideo').addEventListener('click',()=>{$('#videoFile').value='';if($('#bgType').value==='video')clearBg()});$('#clearUrl').addEventListener('click',()=>{$('#bgUrl').value='';if($('#bgType').value==='url')clearBg()});
+function setShade(){let n=Number($('#shade').value)/100;document.documentElement.style.setProperty('--shade',n);$('#shadeLabel').textContent=Math.round(n*100)+'%'}$('#shade').addEventListener('input',setShade);
+$('#applyBg').addEventListener('click',()=>{clearBg();let t=$('#bgType').value,f=$('#bgFile').files[0],vf=$('#videoFile').files[0],url=$('#bgUrl').value.trim();if(t==='color'){$('#wallpaper').style.backgroundImage='none';$('#wallpaper').style.backgroundColor=getComputedStyle(document.documentElement).getPropertyValue('--bg')}else if(t==='photo'&&f){activeBgUrl=URL.createObjectURL(f);document.documentElement.style.setProperty('--wallpaper',`url("${activeBgUrl}")`)}else if(t==='video'&&vf){activeBgUrl=URL.createObjectURL(vf);videoEl=document.createElement('video');videoEl.src=activeBgUrl;videoEl.autoplay=true;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;$('#wallpaper').appendChild(videoEl);videoEl.play().catch(()=>{})}else if(t==='url'&&url){if(!/^https?:\/\//i.test(url)){alert('URL harus memakai http:// atau https://');return}if(/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)){videoEl=document.createElement('video');videoEl.src=url;videoEl.autoplay=true;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;$('#wallpaper').appendChild(videoEl);videoEl.play().catch(()=>{})}else document.documentElement.style.setProperty('--wallpaper',`url("${url.replace(/["'()\\]/g,'')}")`)}else if(t==='photo'||t==='video'||t==='url'){alert('Pilih file atau masukkan URL untuk jenis background yang dipilih.');return}setShade()});
+$('#resetBg').addEventListener('click',()=>{clearBg();$('#bgType').value='default';$('#bgFile').value='';$('#videoFile').value='';$('#bgUrl').value='';updateBgFields();$('#shade').value=68;setShade()});
+function tick(){let tz=$('#tz').value,now=new Date();let parts=new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(now).reduce((o,p)=>(o[p.type]=p.value,o),{});$('#timeMain').textContent=`${parts.hour}:${parts.minute}`;$('#timeSeconds').textContent=parts.second;let hour=Number(parts.hour);$('#timePeriod').textContent=hour>=4&&hour<11?'Pagi':hour>=11&&hour<15?'Siang':hour>=15&&hour<18?'Sore':'Malam';$('#date').textContent=new Intl.DateTimeFormat('id-ID',{timeZone:tz,weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(now);$('#location').textContent=$('#locLabel').value;$('#zoneBadge').textContent=(tz==='Asia/Pontianak'||tz==='Asia/Jakarta'?'WIB · UTC+7':tz==='Asia/Makassar'?'WITA · UTC+8':'WIT · UTC+9')}
+setInterval(tick,1000);$('#saveLocation').addEventListener('click',()=>{localStorage.setItem('hermes-tz',$('#tz').value);localStorage.setItem('hermes-loc',$('#locLabel').value);tick()});
+function addFileList(input,output){$(input).addEventListener('change',e=>{let el=$(output);el.innerHTML='';[...e.target.files].forEach(f=>{let d=document.createElement('div');d.className='file-item';d.textContent=f.name+' · '+(f.size/1024/1024).toFixed(2)+' MB';el.appendChild(d)})})}addFileList('#collegeFiles','#collegeFileList');addFileList('#generalFiles','#generalFileList');
+let history=JSON.parse(localStorage.getItem('hermes-demo-history')||'[]');history.slice(-30).forEach(m=>{if(m&&typeof m.text==='string')addBubble(m.role==='Minnie'?'MINNIE':'KAMU',m.text,m.role==='Minnie'?'':'user')});function renderHistory(){let el=$('#historyList');el.innerHTML='';if(!history.length){el.innerHTML='<div class="file-item">Belum ada pesan tersimpan.</div>';return}history.slice().reverse().forEach(m=>{let d=document.createElement('div');d.className='file-item';d.textContent=m.role+': '+m.text;el.appendChild(d)})}
+function getUiToken(){let t=localStorage.getItem('hermes-ui-token');if(!t){t=prompt('Masukkan token backend Hermes UI (lihat terminal saat server pertama dijalankan):');if(t&&t.trim()){t=t.trim();localStorage.setItem('hermes-ui-token',t)}else return ''}return t}
+function addBubble(role,text,kind=''){let b=document.createElement('div');b.className='bubble'+(kind?' '+kind:'');let title=document.createElement('b');title.textContent=role;b.appendChild(title);b.appendChild(document.createElement('br'));b.appendChild(document.createTextNode(text));$('#messages').appendChild(b);$('#messages').scrollTop=$('#messages').scrollHeight;return b}
+async function sendToHermes(text){text=text.trim();if(!text)return;$('#chatInput').value='';history.push({role:'Kamu',text});localStorage.setItem('hermes-demo-history',JSON.stringify(history));addBubble('KAMU',text,'user');let waiting=addBubble('MINNIE','Sedang memproses permintaan…');renderHistory();let token=getUiToken();if(!token){waiting.textContent='Token belum dimasukkan. Muat ulang halaman untuk mencoba lagi.';return}try{let r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({message:text,history:history.slice(-12)})});let data=await r.json().catch(()=>({error:'Respons backend bukan JSON.'}));if(r.status===401){localStorage.removeItem('hermes-ui-token');throw new Error('Token salah atau tidak valid. Muat ulang halaman lalu masukkan token yang benar.')}if(!r.ok)throw new Error(data.error||('HTTP '+r.status));waiting.textContent=data.reply||'(Hermes tidak mengembalikan teks.)';history.push({role:'Minnie',text:waiting.textContent});localStorage.setItem('hermes-demo-history',JSON.stringify(history));renderHistory()}catch(err){waiting.textContent='Gagal menghubungi Minnie: '+err.message;}}
+$('#chatForm').addEventListener('submit',e=>{e.preventDefault();sendToHermes($('#chatInput').value)});$('#askCollege').addEventListener('click',()=>{let s=$('#subject').value.trim(),q=$('#question').value.trim();if(!q){alert('Isi pertanyaan kuliah dulu.');return}go('chat');sendToHermes('[MODE KULIAH] '+(s?'Mata kuliah: '+s+'. ':'')+q)});$('#clearHistory').addEventListener('click',()=>{history=[];localStorage.setItem('hermes-demo-history','[]');renderHistory()});
+
+function latencyMarkup(ms){
+  const n = Number(ms);
+  const value = !Number.isFinite(n) || n < 0 ? '—' : n >= 1000 ? '999+' : Math.round(n);
+  const level = !Number.isFinite(n) || n < 0 ? 'bad'
+    : n <= 30 ? 'good'
+    : n <= 50 ? 'average'
+    : n <= 100 ? 'low' : 'bad';
+  const labels = {good:'Good',average:'Average',low:'Low',bad:'Bad'};
+  return `<span class="latency-info"><span class="latency-value latency-${level}">${value} ms</span><span class="latency-quality latency-${level}">${labels[level]}</span></span>`;
+}
+
+function setStatusPill(id,ok,label){const el=$(id);if(!el)return;el.className='status-pill '+(ok?'good':'bad');el.textContent=label}
+
+function updateStatusCard(prefix,d){
+  const ids=prefix==='home'
+    ?{hermes:'#homeHermesPill',router:'#homeRouterPill',model:'#homeModelPill',backend:'#homeBackendPill'}
+    :{hermes:'#hermesPill',router:'#routerPill',model:'#modelPill',backend:'#backendPill'};
+  const detail=prefix==='home'
+    ?{hermes:'#homeHermesDetail',router:'#homeRouterDetail',model:'#homeModelDetail',backend:'#homeBackendDetail'}
+    :{hermes:'#hermesDetail',router:'#routerDetail',model:'#modelDetail',backend:'#backendDetail'};
+
+  const slowLimitMs=1500;
+  const hermesSlow=!!d.hermes && Number(d.hermesLatencyMs)>slowLimitMs;
+  const routerSlow=!!d.router && Number(d.routerLatencyMs)>slowLimitMs;
+  const backendSlow=!!d.backend && Number(d.backendLatencyMs)>slowLimitMs;
+
+  function applyStatus(id,available,slow,normalLabel){
+    const el=$(id);
+    if(!el)return;
+    el.className='status-pill '+(!available?'bad':slow?'wait':'good');
+    el.textContent=!available?'Disconnected':slow?'High Latency':normalLabel;
+  }
+
+  applyStatus(ids.hermes,!!d.hermes,hermesSlow,'Connected');
+  applyStatus(ids.router,!!d.router,routerSlow,'Connected');
+  applyStatus(ids.model,!!d.modelReady,false,'Running');
+  applyStatus(ids.backend,!!d.backend,backendSlow,'Running');
+
+  const mini=(symbol,text)=>`<span class="status-mini"><span class="mini-symbol">${symbol}</span>${text}</span>`;
+  const latency=(ms)=>latencyMarkup(ms);
+
+  $(detail.hermes).innerHTML=d.hermes
+    ? mini('◉','Layanan Hermes aktif dan merespons.')+latency(d.hermesLatencyMs)
+    : mini('◉',d.hermesDetail||'Layanan Hermes tidak tersedia.');
+
+  $(detail.router).innerHTML=d.router
+    ? mini('◈',`API aktif · ${Number(d.modelCount)||0} model tersedia.`)+latency(d.routerLatencyMs)
+    : mini('◈',d.routerDetail||'API 9Router tidak merespons.');
+
+  $(detail.model).innerHTML=d.modelReady
+    ? mini('✧',`Model aktif: ${d.configuredModel||'Terkonfigurasi'}`)
+    : mini('✧','Model AI tidak tersedia.');
+
+  $(detail.backend).innerHTML=d.backend
+    ? mini('▣','Server lokal dan API Exolus aktif.')+latency(d.backendLatencyMs)
+    : mini('▣','Backend Exolus tidak dapat dijangkau.');
+}
+
+async function refreshBackendStatus(){const btn=$('#refreshStatus');const checked=$('#lastChecked');if(btn){btn.disabled=true;btn.classList.add('is-loading');btn.textContent='Memeriksa…'}if(checked){checked.classList.add('is-checking');checked.textContent='Sedang memeriksa seluruh komponen…'}['#hermesPill','#routerPill','#modelPill','#backendPill','#homeHermesPill','#homeRouterPill','#homeModelPill','#homeBackendPill'].forEach(id=>{const el=$(id);if(el){el.className='status-pill wait';el.textContent='Memeriksa…'}});try{const statusRequestStarted=Date.now();const r=await fetch('/api/status',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();d.backendLatencyMs=Date.now()-statusRequestStarted;updateStatusCard('home',d);updateStatusCard('detail',d);$('#lastChecked').textContent='Pemeriksaan terakhir: '+new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date(d.checkedAt||Date.now()));}catch(e){const failed={hermes:false,router:false,modelReady:false,backend:false,hermesDetail:'Status tidak dapat dijangkau.',routerDetail:'Status tidak dapat dijangkau.',configuredModel:'Belum tersedia'};updateStatusCard('home',failed);updateStatusCard('detail',failed);$('#homeBackendDetail').textContent='API Exolus tidak dapat dijangkau.';$('#lastChecked').textContent='Pemeriksaan gagal: '+e.message;}finally{if(btn){btn.disabled=false;btn.classList.remove('is-loading');btn.textContent='⟳ Periksa ulang'}if(checked){checked.classList.remove('is-checking')}}}
+$('#refreshStatus').addEventListener('click',refreshBackendStatus);refreshBackendStatus();
+
+const historySvg = document.querySelector('#page-home [data-goto="history"] .card-icon svg');
+const historyTrail = historySvg?.querySelector('.history-trail');
+const historyHead = historySvg?.querySelector('.history-head');
+
+if (historySvg && historyTrail && historyHead) {
+  const radius = 4.5;
+  const center = 12;
+  const trailSpan = Math.PI * 2 * 0.85;
+  const cycle = 6000;
+  const orbitEnd = 4400;
+  const impactEnd = 4750;
+  const glowEnd = 5350;
+
+  historyTrail.style.strokeLinecap = 'round';
+  historyTrail.style.strokeWidth = '1.35';
+  historyTrail.style.stroke = 'currentColor';
+  historyHead.style.transformBox = 'view-box';
+  historyHead.style.transformOrigin = '0 0';
+
+  function historyPoint(angle) {
+    return {
+      x: center + radius * Math.cos(angle),
+      y: center + radius * Math.sin(angle)
+    };
+  }
+
+  function historyArcPath(start, end) {
+    const a = historyPoint(start);
+    const b = historyPoint(end);
+    const span = end - start;
+    const largeArc = span > Math.PI ? 1 : 0;
+    return `M ${a.x} ${a.y} A ${radius} ${radius} 0 ${largeArc} 0 ${b.x} ${b.y}`;
+  }
+
+  function animateHistory(now) {
+    const t = now % cycle;
+    const base = -Math.PI / 2;
+    let angle = base;
+    let opacity = 1;
+    let glow = 0;
+    let recoil = 0;
+
+    if (t < orbitEnd) {
+      angle = base - (t / orbitEnd) * Math.PI * 2;
+    } else if (t < impactEnd) {
+      const q = (t - orbitEnd) / (impactEnd - orbitEnd);
+      angle = base - Math.PI * 2 - 0.10 * Math.sin(q * Math.PI * 2) * Math.exp(-q * 2.5);
+      recoil = Math.sin(q * Math.PI) * 0.7;
+      glow = 1;
+    } else if (t < glowEnd) {
+      angle = base - Math.PI * 2;
+      glow = 1;
+    } else {
+      angle = base - Math.PI * 2;
+      opacity = 1 - (t - glowEnd) / (cycle - glowEnd);
+    }
+
+    const head = historyPoint(angle);
+    const tangent = angle - Math.PI / 2;
+    historyHead.setAttribute(
+      'transform',
+      `translate(${head.x + recoil * Math.cos(tangent)} ${head.y + recoil * Math.sin(tangent)}) rotate(${tangent * 180 / Math.PI})`
+    );
+
+    historyTrail.setAttribute('d', historyArcPath(angle, angle + trailSpan));
+    historyTrail.style.opacity = Math.max(0, opacity).toFixed(3);
+    historyHead.style.opacity = Math.max(0, opacity).toFixed(3);
+
+    const glowStrength = Math.max(0, glow * opacity);
+    historyHead.style.filter = glowStrength
+      ? `drop-shadow(0 0 ${2 + glowStrength * 4}px currentColor)`
+      : 'none';
+    historyTrail.style.filter = glowStrength
+      ? `drop-shadow(0 0 ${1 + glowStrength * 3}px currentColor)`
+      : 'none';
+
+    requestAnimationFrame(animateHistory);
+  }
+
+  requestAnimationFrame(animateHistory);
+}
+
+let savedTheme=localStorage.getItem('hermes-theme');if(savedTheme){$('#theme').value=savedTheme;applyTheme(savedTheme)}let tz=localStorage.getItem('hermes-tz');if(tz)$('#tz').value=tz;let loc=localStorage.getItem('hermes-loc');if(loc)$('#locLabel').value=loc;tick();renderHistory();setShade();updateBgFields();
+</script></body></html>

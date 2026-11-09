@@ -5,7 +5,8 @@ if [ -f "$PIDFILE" ]; then
   pid="$(cat "$PIDFILE" 2>/dev/null || true)"
   if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
     echo "Proses Exolus hidup (PID $pid)."
-    if command -v curl >/dev/null 2>&1; then curl -sS --max-time 3 -o /dev/null -w 'HTTP: %{http_code}\n' http://127.0.0.1:18765 || true; fi
+    PORT="${HERMES_UI_PORT:-18767}"
+    if command -v curl >/dev/null 2>&1; then curl -sS --max-time 3 -o /dev/null -w 'HTTP: %{http_code}\n' "http://127.0.0.1:$PORT" || true; fi
     exit 0
   fi
 fi

@@ -1,0 +1,13 @@
+Exolus - Perubahan Status Sistem
+
+1. Status Sistem Beranda kini memiliki empat komponen: Hermes Agent, 9Router, Model AI, dan Exolus Backend.
+2. Zona Waktu dihapus dari kartu Status Sistem.
+3. Menu Model & Router kini menampilkan empat komponen yang sama.
+4. Kedua halaman menggunakan satu endpoint /api/status dan satu fungsi pembaruan status agar indikator selalu sinkron.
+5. Backend mengembalikan status Exolus Backend, kesiapan Model AI, jumlah model 9Router, serta waktu pemeriksaan.
+6. Status Backend aktif hanya ketika endpoint /api/status berhasil merespons; Model AI siap ketika pemeriksaan Hermes dan 9Router berhasil serta setidaknya satu model terdeteksi.
+
+Catatan:
+- Perubahan ini hanya pada salinan pengembangan.
+- Belum diterapkan ke instalasi produksi di Termux.
+- /api/status tetap endpoint lokal untuk saat ini. Jangan membuka backend ke jaringan publik sebelum autentikasi dan pembatasan akses status diselesaikan.

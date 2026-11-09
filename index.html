@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="id">
 <head>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#071225"><title>Exolus — Personal Helper</title>
 <style>
@@ -75,36 +76,449 @@ input[type=file]::file-selector-button{background:color-mix(in srgb,var(--accent
 [data-theme="white"] .status-pill.bad{color:#b4233c}
 .time-value sup{font-size:.5em;vertical-align:super}
 
+
+.latency-info{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:5px;line-height:1.2;min-width:0}
+.latency-value{font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.latency-quality{font-size:7px;font-weight:600;letter-spacing:.35px}
+.latency-good{color:#22c55e}
+.latency-average{color:#eab308}
+.latency-low{color:#f97316}
+.latency-bad{color:#ef4444}
+
+
+/* Exolus Status Cards Redesign */
+.status-card{display:flex;flex-direction:column;min-width:0;min-height:190px;overflow:hidden}
+.status-card .card-head{min-width:0;align-items:flex-start}
+.status-card .card-head>div:last-child{min-width:0;flex:1}
+.status-card h3{font-size:15px;line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+.status-card .status-pill{max-width:100%;width:max-content;white-space:normal;line-height:1.25;font-size:11px;margin-top:5px}
+.status-card .status-detail{margin-top:auto;padding-top:15px;min-width:0;display:flex;flex-direction:column;gap:7px;line-height:1.45}
+.status-mini{display:block;font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.status-mini .mini-symbol{font-weight:800;margin-right:5px}
+.status-card:nth-child(1) h3{color:#55c9ff;text-shadow:0 0 12px rgba(85,201,255,.32);animation:hermesTitleGlow 5s ease-in-out infinite}
+.status-card:nth-child(2) h3{color:#b69aff;text-shadow:0 0 12px rgba(182,154,255,.32);animation:routerTitleGlow 5s ease-in-out infinite}
+.status-card:nth-child(3) h3{color:#43e4df;text-shadow:0 0 12px rgba(67,228,223,.32);animation:modelTitleGlow 5s ease-in-out infinite}
+.status-card:nth-child(4) h3{color:#69e6ae;text-shadow:0 0 12px rgba(105,230,174,.32);animation:backendTitleGlow 5s ease-in-out infinite}
+@keyframes hermesTitleGlow{0%,100%{text-shadow:0 0 5px rgba(85,201,255,.15)}50%{text-shadow:0 0 14px rgba(85,201,255,.65)}}
+@keyframes routerTitleGlow{0%,100%{text-shadow:0 0 5px rgba(182,154,255,.15)}50%{text-shadow:0 0 14px rgba(182,154,255,.65)}}
+@keyframes modelTitleGlow{0%,100%{text-shadow:0 0 5px rgba(67,228,223,.15)}50%{text-shadow:0 0 14px rgba(67,228,223,.65)}}
+@keyframes backendTitleGlow{0%,100%{text-shadow:0 0 5px rgba(105,230,174,.15)}50%{text-shadow:0 0 14px rgba(105,230,174,.65)}}
+@media(prefers-reduced-motion:reduce){.status-card h3{animation:none!important}}
+@media(max-width:390px){.status-card{min-height:180px}.status-card .status-pill{font-size:10px;padding:5px 7px}.status-card h3{font-size:14px}}
+
+
+/* === EXOLUS VISUAL UPDATE === */
+
+/* Status card: warna mengikuti tema aktif */
+.status-card h3 {
+  color: var(--accent) !important;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.status-card:nth-child(2) h3 { color: var(--accent2) !important; }
+.status-card:nth-child(3) h3 { animation: exolusGlow 4.5s ease-in-out infinite; }
+.status-card:nth-child(4) h3 { animation: exolusGlow 5.5s ease-in-out infinite; }
+
+@keyframes exolusGlow {
+  0%,100% { text-shadow: 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent); }
+  50% { text-shadow: 0 0 14px color-mix(in srgb,var(--accent) 65%,transparent); }
+}
+
+/* Status pill: warna teks dan garis mengikuti tema */
+.status-pill.good,
+.status-pill.bad,
+.status-pill.wait {
+  color: var(--accent) !important;
+  border-color: color-mix(in srgb,var(--accent) 42%,transparent) !important;
+  background: color-mix(in srgb,var(--accent) 9%,transparent);
+}
+
+/* Mini info: ringkas dan tetap mudah dibaca */
+.status-card .status-detail {
+  padding-top: 11px;
+  gap: 6px;
+}
+.status-mini {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.status-mini .mini-symbol {
+  color: var(--accent);
+  margin-right: 5px;
+}
+
+/* Latensi dalam satu baris */
+.latency-info {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-top: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.latency-value {
+  font-size: 14px;
+  font-weight: 700;
+}
+.latency-quality {
+  font-size: 5.5px;
+  font-weight: 700;
+  letter-spacing: .25px;
+}
+
+/* Kartu keamanan */
+.security-card {
+  margin-top: 18px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+.security-card .security-title {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.security-card .security-icon {
+  color: var(--accent);
+  animation: securityPulse 3s ease-in-out infinite;
+}
+.security-card .security-detail {
+  color: var(--muted);
+  line-height: 1.6;
+}
+.security-card .mini-symbol {
+  color: var(--accent);
+  font-weight: 800;
+  margin-right: 5px;
+}
+@keyframes securityPulse {
+  0%,100% { filter: drop-shadow(0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)); }
+  50% { filter: drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 75%,transparent)); }
+}
+
+/* Menu utama: teks dan ikon mengikuti tema */
+#page-home [data-goto] {
+  color: var(--text);
+}
+#page-home [data-goto] .card-icon {
+  color: var(--accent);
+  transform-origin: center;
+}
+/* Animasi ikon menu Exolus */
+#page-home [data-goto="chat"] .card-icon svg {
+  animation: chatBreath 3s ease-in-out infinite;
+}
+#page-home [data-goto="college"] .card-icon {
+  animation: menuTilt 4s ease-in-out infinite;
+}
+#page-home [data-goto="files"] .card-icon svg {
+  animation: none;
+}
+#page-home [data-goto="files"] .card-icon .folder-paper {
+  filter: drop-shadow(0 1px 1px color-mix(in srgb,var(--bg) 65%,transparent));
+  transform-box:view-box;
+  animation:folderPaperBounce 3.6s cubic-bezier(.34,1.56,.64,1) infinite;
+}
+#page-home [data-goto="files"] .card-icon .folder-back,
+#page-home [data-goto="files"] .card-icon .folder-door {
+  transform-box:view-box;
+  transform-origin:12px 19px;
+  animation:folderShellBounce 3.6s ease-in-out infinite;
+}
+@keyframes folderPaperBounce {
+  0%,12%,100% {transform:translateY(0);}
+  24% {transform:translateY(-7px);}
+  34% {transform:translateY(-5px);}
+  42% {transform:translateY(-6px);}
+  62% {transform:translateY(-6px);}
+  76% {transform:translateY(1px);}
+  84% {transform:translateY(-1px);}
+}
+@keyframes folderShellBounce {
+  0%,12%,100% {transform:translateY(0);}
+  24% {transform:translateY(1px);}
+  34% {transform:translateY(-.5px);}
+  42%,62% {transform:translateY(0);}
+  76% {transform:translateY(1px);}
+  84% {transform:translateY(-.5px);}
+}
+#page-home [data-goto="system"] .card-icon svg {
+  animation: none;
+}
+#page-home [data-goto="system"] .card-icon .router-wave {
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+  animation: routerSignal 2.8s ease-out infinite;
+}
+#page-home [data-goto="system"] .card-icon .wave-two {
+  animation-delay: 1.4s;
+}
+@keyframes routerSignal {
+  0%   { opacity: 0; transform: scale(.45); }
+  18%  { opacity: .3; transform: scale(.62); }
+  42%  { opacity: .6; transform: scale(.82); }
+  62%  { opacity: .85; transform: scale(1); }
+  72%  { opacity: 1; transform: scale(1.06); }
+  78%  { opacity: .85; transform: scale(1.02); }
+  86%  { opacity: .5; transform: scale(1.08); }
+  100% { opacity: 0; transform: scale(1.12); }
+}
+#page-home [data-goto="history"] .card-icon svg {
+  animation: none;
+}
+#page-home [data-goto="history"] .card-icon {
+  width: 44px;
+  height: 44px;
+}
+#page-home [data-goto="history"] .card-icon svg {
+  width: 30px;
+  height: 30px;
+}
+#page-home [data-goto="history"] .history-minute {
+  transform-origin: 12px 12px;
+  animation: historyMinute 3s linear infinite;
+}
+#page-home [data-goto="history"] .history-hour {
+  transform-origin: 12px 12px;
+  animation: historyHour 8s linear infinite;
+}
+#page-home [data-goto="settings"] .card-icon svg {
+  overflow: visible;
+  animation: settingsSparkle 3s ease-in-out infinite;
+}
+#page-home [data-goto="settings"] .personal-sparkle-small {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: settingsSparkleSmall 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 2px var(--accent));
+}
+
+@keyframes chatBreath {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+@keyframes folderOpenClose {
+  0%,100% { transform: scaleY(1); }
+  35%,65% { transform: scaleY(.88); }
+}
+@keyframes routerWave {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .45; transform: scale(1.13); }
+}
+@keyframes historyArrow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+@keyframes historyMinute {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes historyHour {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes settingsSparkle {
+  0%,100% { transform: scale(1); }
+  35% { transform: scale(.94); }
+  65% { transform: scale(1.12); }
+  78% { transform: scale(1.04); }
+}
+@keyframes settingsSparkleSmall {
+  0%,100% { opacity: .45; transform: rotate(0deg) scale(.75); }
+  45% { opacity: 1; transform: rotate(45deg) scale(1.15); }
+  70% { opacity: .8; transform: rotate(70deg) scale(.95); }
+}
+
+@keyframes menuPulse {
+  0%,100% { transform: scale(1); filter: drop-shadow(0 0 1px var(--accent)); }
+  50% { transform: scale(1.06); filter: drop-shadow(0 0 7px var(--accent)); }
+}
+@keyframes menuTilt {
+  0%,100% { transform: rotate(0); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+@keyframes menuScan {
+  0%,100% { filter: drop-shadow(0 0 1px var(--accent)); }
+  50% { filter: drop-shadow(0 0 8px var(--accent)); }
+}
+@keyframes menuSignal {
+  to { transform: rotate(360deg); }
+}
+@keyframes menuClock {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+@keyframes menuGear {
+  to { transform: rotate(360deg); }
+}
+
+/* Tombol pemeriksaan dan animasi hasil */
+#refreshStatus.is-loading {
+  opacity: .8;
+  cursor: progress;
+}
+#refreshStatus.is-loading::before {
+  content: " ";
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 7px;
+  vertical-align: -1px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: refreshSpin .7s linear infinite;
+}
+@keyframes refreshSpin {
+  to { transform: rotate(360deg); }
+}
+#lastChecked {
+  transition: color .25s ease, opacity .25s ease;
+}
+#lastChecked.is-checking {
+  color: var(--accent);
+  animation: checkPulse 1.2s ease-in-out infinite;
+}
+@keyframes checkPulse {
+  50% { opacity: .55; }
+}
+
+/* Hormati pengaturan gerakan perangkat */
+@media (prefers-reduced-motion: reduce) {
+  .status-card h3,
+  .security-card .security-icon,
+  #page-home [data-goto] .card-icon,
+  #refreshStatus.is-loading::before,
+  #lastChecked.is-checking {
+    animation: none !important;
+  }
+}
+
 </style></head><body>
 <div id="wallpaper"></div><div class="app">
 <aside class="sidebar"><div class="brand"><div class="logo"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/></svg></span></div><div>EXOLUS<small class="subtitle">AI, MADE EASY</small></div></div>
 <nav>
-<button class="nav active" data-page="home"><span class="navicon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-7h6v7"/></svg></span></span>Beranda</button><button class="nav" data-page="chat"><span class="navicon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.5A2.5 2.5 0 0 1 4 13.5Z"/><circle cx="8" cy="10" r=".7"/><circle cx="12" cy="10" r=".7"/><circle cx="16" cy="10" r=".7"/></svg></span></span>Chat AI</button><button class="nav" data-page="college"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></span>Kuliah</button><button class="nav" data-page="files"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/><path d="M3 9h18"/></svg></span>File Manager</button><button class="nav" data-page="system"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z" transform="translate(-1 -1) scale(1.08)"/></svg></span>Model & Router</button><button class="nav" data-page="history"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span>Riwayat</button><button class="nav" data-page="settings"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15.1a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.8.1 1.7 1.7 0 0 0-.9 1.5v.2h-3.4v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8-.1l-.2.1-1.7-2.9.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H6v-3.4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L9 4.8l.2.1a1.7 1.7 0 0 0 1.8-.1 1.7 1.7 0 0 0 .9-1.5v-.2h3.4v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8.1l.2-.1 1.7 2.9-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.2V14h-.2a1.7 1.7 0 0 0-1.7 1.1Z" transform="translate(-1 -1) scale(1.08)"/></svg></span>Pengaturan</button>
+<button class="nav active" data-page="home"><span class="navicon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-7h6v7"/></svg></span></span>Beranda</button><button class="nav" data-page="chat"><span class="navicon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.5A2.5 2.5 0 0 1 4 13.5Z"/><circle cx="8" cy="10" r=".7"/><circle cx="12" cy="10" r=".7"/><circle cx="16" cy="10" r=".7"/></svg></span></span>Chat AI</button><button class="nav" data-page="college"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></span>Kuliah</button><button class="nav" data-page="files"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/><path d="M3 9h18"/></svg></span>File Manager</button><button class="nav hidden" id="navSystemBtn" data-page="system"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z" transform="translate(-1 -1) scale(1.08)"/></svg></span>Model & Router</button><button class="nav" data-page="history"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span>Riwayat</button><button class="nav" data-page="settings"><span class="navicon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15.1a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.8.1 1.7 1.7 0 0 0-.9 1.5v.2h-3.4v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8-.1l-.2.1-1.7-2.9.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H6v-3.4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L9 4.8l.2.1a1.7 1.7 0 0 0 1.8-.1 1.7 1.7 0 0 0 .9-1.5v-.2h3.4v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8.1l.2-.1 1.7 2.9-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.2V14h-.2a1.7 1.7 0 0 0-1.7 1.1Z" transform="translate(-1 -1) scale(1.08)"/></svg></span>Pengaturan</button>
 </nav><div class="sidebar-bottom"><span class="dot"></span><b>Exolus siap</b><p>Periksa status Hermes Agent dan 9Router pada menu Model &amp; Router.</p></div></aside>
 <main><div class="topbar"><div class="search" aria-label="Ruang kerja Exolus"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></span> &nbsp; Ruang kerja Exolus</div><div class="datetime"><div class="time-line"><div class="time-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div><div><div class="time-value" id="time"><span id="timeMain">--:--</span><sup id="timeSeconds">--</sup></div><div class="time-period" id="timePeriod">Memuat…</div></div></div><div class="date-value" id="date">Memuat tanggal…</div><div class="place-value"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span id="location">Pontianak, Kalimantan Barat</span><span class="timezone" id="zoneBadge">WIB · UTC+7</span></div></div></div>
 <section id="page-home" class="page"><div class="hero"><div class="eyebrow">YOUR PERSONAL AI SYSTEM</div><h1>Selamat datang di Exolus</h1><p>Ruang kerja AI pribadi dengan nuansa game futuristik.</p><button class="btn" data-goto="chat"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.5A2.5 2.5 0 0 1 4 13.5Z"/><circle cx="8" cy="10" r=".7"/><circle cx="12" cy="10" r=".7"/><circle cx="16" cy="10" r=".7"/></svg></span> &nbsp; Mulai Chat <span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></div>
 <div class="grid">
 <div class="card" data-goto="chat"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.5A2.5 2.5 0 0 1 4 13.5Z"/><circle cx="8" cy="10" r=".7"/><circle cx="12" cy="10" r=".7"/><circle cx="16" cy="10" r=".7"/></svg></span></div><h3>Chat AI</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.5A2.5 2.5 0 0 1 4 13.5Z"/><circle cx="8" cy="10" r=".7"/><circle cx="12" cy="10" r=".7"/><circle cx="16" cy="10" r=".7"/></svg></span> Kenalkan Minnie, asisten AI pribadimu.</p></div>
-<div class="card" data-goto="college"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></div><h3>Mode Kuliah</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21Z"/><path d="M4 4.5v16.5M8 6h8M8 10h8"/></svg></span> Kelola materi, foto, video, dan dokumen.</p></div>
-<div class="card" data-goto="files"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/><path d="M3 9h18"/></svg></div><h3>File Manager</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/><path d="M3 9h18"/></svg></span> Pilih file lokal untuk materi belajar.</p></div>
-<div class="card" data-goto="system"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14M8 8a5.5 5.5 0 0 0 0 8M16 8a5.5 5.5 0 0 1 0 8"/></svg></span></div><h3>Model & Router</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span> Panel status koneksi AI.</p></div>
-<div class="card" data-goto="history"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></div><h3>Riwayat</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span> Riwayat Minnie tersimpan di browser ini.</p></div>
-<div class="card" data-goto="settings"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15.1a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.8.1 1.7 1.7 0 0 0-.9 1.5v.2h-3.4v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8-.1l-.2.1-1.7-2.9.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H6v-3.4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L9 4.8l.2.1a1.7 1.7 0 0 0 1.8-.1 1.7 1.7 0 0 0 .9-1.5v-.2h3.4v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8.1l.2-.1 1.7 2.9-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.2V14h-.2a1.7 1.7 0 0 0-1.7 1.1Z" transform="translate(-1 -1) scale(1.08)"/></svg></div><h3>Personalisasi</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/></svg></span> Ubah tema, background, dan lokasi waktu.</p></div></div>
-<h2 class="section-title"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span> Status Sistem</h2><div class="grid"><div class="card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M8 12h.01M16 12h.01M8 16h8"/><path d="M2 11v5M22 11v5"/></svg></span></div><h3>Hermes Agent</h3></div><div class="status-row"><span class="muted">Koneksi</span><b class="warning">Belum terhubung</b></div><p>Perlu backend lokal yang aman.</p></div><div class="card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span></div><h3>9Router</h3></div><div class="status-row"><span class="muted">Status</span><b class="warning">Belum diperiksa</b></div><p>UI demo belum memeriksa API.</p></div><div class="card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div><h3>Zona Waktu</h3></div><div class="status-row"><span class="muted">Lokal</span><b class="good">WIB · UTC+7</b></div><p>Asia/Pontianak</p></div></div></section>
+<div class="card" data-goto="college"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></div><h3>Mode Kuliah</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></span> Kelola materi, foto, video, dan dokumen.</p></div>
+<div class="card" data-goto="files"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true">
+  <path class="folder-back" d="M2.8 8V5.7A1.7 1.7 0 0 1 4.5 4h5l1.8 2h8.2A1.7 1.7 0 0 1 21.2 7.7V18H2.8Z" fill="#071629" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+  <g class="folder-paper">
+    <g class="paper-one">
+      <path d="M4.2 7.5h5.2v9H4.2z" fill="color-mix(in srgb,var(--accent) 14%,var(--panel2))" stroke="var(--accent)" stroke-opacity=".55" stroke-width=".55"/>
+      <path d="M5.1 10h3.2M5.1 12h3.2M5.1 14h2.5" stroke="var(--accent)" stroke-opacity=".6" stroke-width=".45"/>
+    </g>
+    <g class="paper-two">
+      <path d="M9.4 6.5h5.2v10H9.4z" fill="color-mix(in srgb,var(--accent) 18%,var(--panel2))" stroke="var(--accent)" stroke-opacity=".65" stroke-width=".6"/>
+      <path d="M10.3 9h3.2M10.3 11h3.2M10.3 13h2.5" stroke="var(--accent)" stroke-opacity=".65" stroke-width=".45"/>
+    </g>
+    <g class="paper-three">
+      <path d="M14.6 7.5h5.2v9h-5.2z" fill="color-mix(in srgb,var(--accent) 12%,var(--panel))" stroke="var(--accent)" stroke-opacity=".5" stroke-width=".55"/>
+      <path d="M15.5 10h3.2M15.5 12h3.2M15.5 14h2.5" stroke="var(--accent)" stroke-opacity=".55" stroke-width=".45"/>
+    </g>
+  </g>
+  <path class="folder-door" d="M2.8 8.5h18.4v9.2a1.5 1.5 0 0 1-1.5 1.5H4.3a1.5 1.5 0 0 1-1.5-1.5Z" fill="#071629" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+</svg></div><h3>File Manager</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/><path class="folder-base" d="M4.5 19.5h15"/></svg></span> Pilih file lokal untuk materi belajar.</p></div>
+<div class="card hidden" id="homeSystemCard" data-goto="system"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="3"/><path class="router-wave wave-one" d="M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/><path class="router-wave wave-two" d="M8 8a5.5 5.5 0 0 0 0 8M16 8a5.5 5.5 0 0 1 0 8"/></svg></span></div><h3>Model & Router</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="2.2"/><path d="M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14M8 8a5.5 5.5 0 0 0 0 8M16 8a5.5 5.5 0 0 1 0 8"/></svg></span> Memantau koneksi model dan layanan router.</p></div>
+<div class="card" data-goto="history"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true">
+<defs>
+  <path id="historyTrack" pathLength="100"
+        d="M12 4.5A7.5 7.5 0 0 0 12 19.5A7.5 7.5 0 0 0 12 4.5"/>
+</defs>
+<path class="history-trail" fill="none" d=""/>
+<g class="history-head" fill="none">
+  <path d="M-1.5 -1.5 1.5 0 -1.5 1.5"
+        stroke="currentColor" stroke-width="1.35"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+</g>
+<g class="history-minute"><path d="M12 12V5"/></g>
+<g class="history-hour"><path d="M12 12 8 9"/></g>
+<circle cx="12" cy="12" r=".8" fill="currentColor"/>
+</svg></div><h3>Riwayat</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span> Riwayat Minnie tersimpan di browser ini.</p></div>
+<div class="card" data-goto="settings"><div class="card-head"><div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="personal-sparkle-main" d="m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5Z"/><path class="personal-sparkle-small" d="m19 3 .9 2.6 2.6.9-2.6.9L19 11l-.9-2.6-2.6-.9 2.6-.9Z"/></svg></div><h3>Personalisasi</h3></div><p><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/></svg></span> Ubah tema, background, dan lokasi waktu.</p></div></div>
+<div id="homeSystemSection" class="hidden"><h2 class="section-title"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span> Status Sistem</h2>
+<div class="grid">
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M8 12h.01M16 12h.01M8 16h8M2 11v5M22 11v5"/></svg></span></div><div><h3>Hermes Agent</h3><div id="homeHermesPill" class="status-pill wait">Menunggu pemeriksaan</div></div></div><p id="homeHermesDetail" class="status-detail">Memeriksa layanan Hermes.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span></div><div><h3>9Router</h3><div id="homeRouterPill" class="status-pill wait">Menunggu pemeriksaan</div></div></div><p id="homeRouterDetail" class="status-detail">Memeriksa koneksi API.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 5a3 3 0 0 0-5.7-1.3A3.5 3.5 0 0 0 4 10a3.5 3.5 0 0 0 .7 6.5A3.5 3.5 0 0 0 12 18Z"/><path d="M12 5a3 3 0 0 1 5.7-1.3A3.5 3.5 0 0 1 20 10a3.5 3.5 0 0 1-.7 6.5A3.5 3.5 0 0 1 12 18ZM8 9h2M14 13h2M12 5v15"/></svg></span></div><div><h3>Model AI</h3><div id="homeModelPill" class="status-pill wait">Menunggu pemeriksaan</div></div></div><p id="homeModelDetail" class="status-detail">Menunggu kesiapan layanan AI.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01M11 7h6M11 17h6"/></svg></span></div><div><h3>Exolus Backend</h3><div id="homeBackendPill" class="status-pill wait">Menunggu pemeriksaan</div></div></div><p id="homeBackendDetail" class="status-detail">Memeriksa server dan API lokal.</p></div>
+</div></div></section>
 <section id="page-chat" class="page hidden"><h1>◉ Minnie AI</h1><p class="muted">Tanyakan apa saja, cari ide, dan selesaikan kebutuhanmu bersama Minnie.</p><div class="panel chatbox"><div class="messages" id="messages"><div class="bubble"><b>MINNIE</b><br>Hai! Aku Minnie, asisten AI kamu. Mau kita kerjakan apa hari ini?</div></div><form id="chatForm" class="composer"><input id="chatInput" type="text" placeholder="Tulis pesan untuk Minnie..." required autocomplete="off"><button class="btn">Kirim <span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></form></div></section>
-<section id="page-college" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></span> Mode Kuliah</h1><p class="muted">Tanyakan materi, bahas soal, dan susun ide tugas kuliah.</p><div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/></svg></span> Tanya tentang kuliah</h2><div class="field"><label>Mata kuliah / topik</label><input id="subject" type="text" placeholder="Contoh: Matematika Diskrit, Sistem Komputer"></div><div class="field"><label>Pertanyaan</label><input id="question" type="text" placeholder="Tulis pertanyaan atau instruksi belajar"></div><button class="btn" id="askCollege">Siapkan pertanyaan</button><p class="notice">Pertanyaanmu akan dibuka di Chat AI bersama Minnie.</p></div><div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m8 12.5 6.8-6.8a3 3 0 0 1 4.2 4.2l-8.5 8.5a5 5 0 0 1-7.1-7.1l8.2-8.2"/></svg></span> Materi kuliah</h2><div class="upload"><input id="collegeFiles" type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.txt,.xlsx,.csv"><p>Pilih foto, video, PDF, dokumen, presentasi, atau file data.</p></div><div id="collegeFileList" class="file-list"></div><p class="notice">Pilih file untuk melihat nama dan ukurannya. File belum diunggah.</p></div></section>
-<section id="page-files" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/><path d="M3 9h18"/></svg></span> File Manager</h1><div class="panel"><h2>Pilih file lokal</h2><input id="generalFiles" type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.txt,.xlsx,.csv"><div id="generalFileList" class="file-list" style="margin-top:12px"></div><p class="notice">Saat ini file hanya ditampilkan sebagai nama dan ukuran. Pengunggahan dan analisis file oleh AI belum diaktifkan.</p></div></section>
-<section id="page-system" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span> Model &amp; Router</h1><p class="muted">Status diperiksa langsung dari Termux. Indikator tidak akan dianggap terhubung sebelum pemeriksaan berhasil.</p><div class="status-actions"><span id="lastChecked" class="status-detail">Belum diperiksa</span><button class="btn secondary" id="refreshStatus" type="button">⟳ Periksa ulang</button></div><div class="grid"><div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M8 12h.01M16 12h.01M8 16h8M2 11v5M22 11v5"/></svg></span></div><div><h3>Hermes Agent</h3><div id="hermesPill" class="status-pill wait">Belum diperiksa</div></div></div><p id="hermesDetail" class="status-detail">Menunggu pemeriksaan perintah `hermes status`.</p></div><div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span></div><div><h3>9Router</h3><div id="routerPill" class="status-pill wait">Belum diperiksa</div></div></div><p id="routerDetail" class="status-detail">Endpoint lokal: 127.0.0.1:20128/v1/models.</p></div><div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 5a3 3 0 0 0-5.7-1.3A3.5 3.5 0 0 0 4 10a3.5 3.5 0 0 0 .7 6.5A3.5 3.5 0 0 0 12 18Z"/><path d="M12 5a3 3 0 0 1 5.7-1.3A3.5 3.5 0 0 1 20 10a3.5 3.5 0 0 1-.7 6.5A3.5 3.5 0 0 1 12 18ZM8 9h2M14 13h2M12 5v15"/></svg></span></div><div><h3>Model AI</h3><div id="modelPill" class="status-pill wait">Menunggu</div></div></div><p id="modelDetail" class="status-detail">Model akan ditampilkan setelah pemeriksaan status.</p></div></div><div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3"/></svg></span> Keamanan koneksi</h2><p class="notice">Hermes Agent dan 9Router diperiksa dari backend lokal. Jangan membuka port 20128 atau 18765 langsung ke internet. Untuk akses HTTPS dari luar HP, gunakan tunnel HTTPS dengan token acak panjang; domain Vex permanen memerlukan domain milikmu dan konfigurasi DNS.</p></div></section>
+<section id="page-college" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></svg></span> Mode Kuliah</h1><p class="muted">Tanyakan materi, bahas soal tugas, dan kirim berkas untuk dianalisis bersama Minnie.</p><div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/></svg></span> Pertanyaan Tugas / Diskusi</h2><div class="field"><label>Mata kuliah / Topik</label><input id="subject" type="text" placeholder="Contoh: Matematika Diskrit, Pemrograman Web, Akuntansi"></div><div class="field"><label>Instruksi / Pertanyaan</label><textarea id="question" rows="3" placeholder="Tulis instruksi pengerjaan, soal tugas, atau bagian yang perlu dibantu..." style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--border);background:var(--input);color:var(--text);font:inherit"></textarea></div></div><div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m8 12.5 6.8-6.8a3 3 0 0 1 4.2 4.2l-8.5 8.5a5 5 0 0 1-7.1-7.1l8.2-8.2"/></svg></span> Lampiran Dokumen Tugas (EdLink / Materi)</h2><div class="upload"><input id="collegeFiles" type="file" multiple accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.txt,.xlsx,.csv"><p>Pilih berkas PDF, Word (.docx), Foto Soal (.jpg/.png), atau presentasi.</p></div><div id="collegeFileList" class="file-list" style="margin-top:10px"></div><p id="collegeUploadNotice" class="notice">Pilih file materi kuliah untuk diunggah dan dianalisis langsung oleh Minnie.</p><div style="margin-top:16px"><button class="btn" id="askCollege" type="button">Analisis &amp; Kirim ke Minnie <span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></div></div></section>
+<section id="page-files" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/><path d="M3 9h18"/></svg></span> File Manager</h1><div class="panel"><h2>Pilih Berkas Lokal / Tugas</h2><input id="generalFiles" type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.txt,.xlsx,.csv"><div id="generalFileList" class="file-list" style="margin-top:12px"></div><div style="margin-top:14px;display:flex;gap:10px"><button class="btn" id="analyzeGeneralFiles" type="button">Analisis Berkas Terpilih dengan Minnie</button></div><p class="notice">Berkas yang Anda pilih akan diunggah ke server lokal dan diteruskan ke Hermes untuk dianalisis kontennya.</p></div></section>
+<section id="page-system" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span> Model &amp; Router</h1><p class="muted">Status diperiksa langsung dari Termux. Indikator tidak akan dianggap terhubung sebelum pemeriksaan berhasil.</p><div class="status-actions"><span id="lastChecked" class="status-detail">Belum diperiksa</span><button class="btn secondary" id="refreshStatus" type="button">⟳ Periksa ulang</button></div><div class="grid">
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M8 12h.01M16 12h.01M8 16h8M2 11v5M22 11v5"/></svg></span></div><div><h3>Hermes Agent</h3><div id="hermesPill" class="status-pill wait">Belum diperiksa</div></div></div><p id="hermesDetail" class="status-detail">Menunggu pemeriksaan perintah hermes status.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg></span></div><div><h3>9Router</h3><div id="routerPill" class="status-pill wait">Belum diperiksa</div></div></div><p id="routerDetail" class="status-detail">Memeriksa respons API dan daftar model.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 5a3 3 0 0 0-5.7-1.3A3.5 3.5 0 0 0 4 10a3.5 3.5 0 0 0 .7 6.5A3.5 3.5 0 0 0 12 18Z"/><path d="M12 5a3 3 0 0 1 5.7-1.3A3.5 3.5 0 0 1 20 10a3.5 3.5 0 0 1-.7 6.5A3.5 3.5 0 0 1 12 18ZM8 9h2M14 13h2M12 5v15"/></svg></span></div><div><h3>Model AI</h3><div id="modelPill" class="status-pill wait">Menunggu</div></div></div><p id="modelDetail" class="status-detail">Model akan ditampilkan setelah pemeriksaan status.</p></div>
+<div class="card status-card"><div class="card-head"><div class="card-icon"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01M11 7h6M11 17h6"/></svg></span></div><div><h3>Exolus Backend</h3><div id="backendPill" class="status-pill wait">Menunggu</div></div></div><p id="backendDetail" class="status-detail">Status server dan API lokal Exolus.</p></div>
+</div><div class="panel security-card"><h2 class="security-title"><span class="ui-icon security-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3"/></svg></span> Keamanan koneksi</h2><p class="notice security-detail"><span class="mini-symbol">⬡</span>Hermes Agent dan 9Router diperiksa dari backend lokal. Jangan membuka port 20128 atau 18765 langsung ke internet. Untuk akses HTTPS dari luar HP, gunakan tunnel HTTPS dengan token acak panjang; domain Vex permanen memerlukan domain milikmu dan konfigurasi DNS.</p></div></section>
 <section id="page-history" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span> Riwayat</h1><div class="panel"><p class="muted">Temukan kembali percakapan yang tersimpan di perangkat ini.</p><div id="historyList" class="file-list"><div class="file-item">Belum ada pesan tersimpan.</div></div><button class="btn secondary" id="clearHistory">Hapus riwayat</button></div></section>
 <section id="page-settings" class="page hidden"><h1><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 1.4-3.4 1.5 1.5 0 0 1 1.1-2.6H18a3 3 0 0 0 3-3c0-5-4-9-9-9Z"/><circle cx="7.5" cy="10" r="1"/><circle cx="11" cy="6.5" r="1"/><circle cx="16" cy="8" r="1"/></svg></span> Pengaturan Tampilan</h1><div class="panel"><h2>Tema Warna</h2><div class="field"><label>Pilih preset</label><select id="theme"><option value="blue">Cyber Blue</option><option value="purple">Phantom Purple</option><option value="green">Matrix Green</option><option value="red">Crimson Red</option><option value="orange">Solar Orange</option><option value="white">Minimal White</option><option value="custom">Custom Color</option></select></div><div class="field"><label>Warna aksen kustom</label><div class="row"><input type="color" id="customColor" value="#36c9ff"><span class="muted">Pilih warna utama UI</span></div></div></div>
-<div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></span> Google Account Sign-In</h2><p class="muted">Masuk dengan akun Google (seperti brayenbayen@gmail.com) untuk menyinkronkan profil.</p><div id="googleAuthStatus" class="status-pill wait" style="margin-bottom:12px">Belum masuk</div><div class="field" id="googleEmailField"><label>Akun Google / Email</label><input type="email" id="googleEmailInput" placeholder="brayenbayen@gmail.com" value="brayenbayen@gmail.com"></div><div class="field" id="googlePassField"><label>Password Google</label><input type="password" id="googlePassInput" placeholder="Masukkan password Google"></div><div class="row" style="display:flex;gap:10px;margin-top:12px"><button class="btn" id="googleLoginBtn" type="button">Masuk dengan Google</button><button class="btn secondary hidden" id="googleLogoutBtn" type="button">Keluar</button></div><p class="notice" style="margin-top:10px">Mendukung pemilihan akun Google, input email & password, serta autentikasi lokal aman.</p></div>
-<div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg></span> Background</h2><div class="field"><label>Jenis background</label><select id="bgType"><option value="default">Bawaan futuristik</option><option value="photo">Foto / GIF dari perangkat</option><option value="video">Video dari perangkat</option><option value="url">URL gambar / GIF / video</option><option value="color">Warna polos</option></select></div><div class="field" id="bgPhotoField"><label>Foto atau GIF</label><div class="file-control"><input type="file" id="bgFile" accept="image/*,.gif"><button class="file-clear" type="button" id="clearPhoto">Batal pilih</button></div></div><div class="field hidden" id="bgVideoField"><label>Video</label><div class="file-control"><input type="file" id="videoFile" accept="video/*"><button class="file-clear" type="button" id="clearVideo">Batal pilih</button></div></div><div class="field hidden" id="bgUrlField"><label>URL gambar, GIF, atau video</label><input type="url" id="bgUrl" placeholder="https://contoh.com/background.jpg"><button class="file-clear" type="button" id="clearUrl">Hapus URL</button></div><div class="field"><label>Lapisan gelap: <span id="shadeLabel">68%</span></label><input id="shade" type="range" min="10" max="90" value="68"></div><div class="row"><button class="btn" id="applyBg">Terapkan background</button><button class="btn secondary" id="resetBg">Reset</button></div><p class="notice">Pilih satu jenis background, lalu terapkan. Kamu bisa mengatur tingkat gelap agar teks tetap terbaca.</p></div>
-<div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span> Waktu & Lokasi</h2><div class="field"><label>Zona waktu</label><select id="tz"><option value="Asia/Pontianak">Pontianak / Kalimantan Barat — WIB</option><option value="Asia/Jakarta">Jakarta — WIB</option><option value="Asia/Makassar">Makassar — WITA</option><option value="Asia/Jayapura">Jayapura — WIT</option></select></div><div class="field"><label>Label lokasi</label><input id="locLabel" type="text" value="Pontianak, Kalimantan Barat"></div><button class="btn" id="saveLocation">Simpan waktu & lokasi</button></div></section>
+<div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg></span> Background</h2><div class="field"><label>Jenis background</label><select id="bgType"><option value="default">Bawaan futuristik</option><option value="photo">Foto / GIF dari perangkat</option><option value="video">Video dari perangkat</option><option value="url">URL gambar / GIF / video</option><option value="color">Warna polos</option></select></div><div class="field" id="bgPhotoField"><label>Foto atau GIF</label><div class="file-control"><input type="file" id="bgFile" accept="image/*,image/gif,.gif,*/*"><button class="file-clear" type="button" id="clearPhoto">Batal pilih</button></div><div id="bgFileNotice" class="file-list" style="margin-top:6px;font-size:12px;color:var(--muted)"></div></div><div class="field hidden" id="bgVideoField"><label>Video</label><div class="file-control"><input type="file" id="videoFile" accept="video/*"><button class="file-clear" type="button" id="clearVideo">Batal pilih</button></div></div><div class="field hidden" id="bgUrlField"><label>URL gambar, GIF, atau video</label><input type="url" id="bgUrl" placeholder="https://contoh.com/background.jpg"><button class="file-clear" type="button" id="clearUrl">Hapus URL</button></div><div class="field"><label>Lapisan gelap: <span id="shadeLabel">68%</span></label><input id="shade" type="range" min="10" max="90" value="68"></div><div class="row"><button class="btn" id="applyBg">Terapkan background</button><button class="btn secondary" id="resetBg">Reset</button></div><p class="notice">Pilih satu jenis background, lalu terapkan. Kamu bisa mengatur tingkat gelap agar teks tetap terbaca.</p></div>
+<div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span> Waktu & Lokasi</h2><div class="field"><label>Zona waktu</label><select id="tz"><option value="Asia/Pontianak">Pontianak / Kalimantan Barat — WIB</option><option value="Asia/Jakarta">Jakarta — WIB</option><option value="Asia/Makassar">Makassar — WITA</option><option value="Asia/Jayapura">Jayapura — WIT</option></select></div><div class="field"><label>Label lokasi</label><input id="locLabel" type="text" value="Pontianak, Kalimantan Barat"></div><button class="btn" id="saveLocation">Simpan waktu & lokasi</button></div>
+<div class="panel"><h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3"/></svg></span> Login Web Developer (Google Sign-In)</h2><p class="notice" style="margin-bottom:12px">Website terbuka untuk publik. Khusus Web Developer (<b>brayenbayen@gmail.com</b>), masukkan Google Client ID dari Google Cloud Console lalu masuk dengan akun Google.</p>
+<div class="field">
+  <label>Google Client ID (OAuth 2.0)</label>
+  <div style="display:flex;gap:8px">
+    <input type="text" id="googleClientIdInput" placeholder="Contoh: xxxxxxxx.apps.googleusercontent.com">
+    <button class="btn secondary" id="saveClientIdBtn" type="button">Simpan</button>
+  </div>
+  <p class="notice" style="font-size:11px;margin-top:4px">Pastikan URL aplikasi ini (<code id="currentOriginLabel"></code>) ditambahkan pada <b>Authorized JavaScript origins</b> di Google Cloud Console.</p>
+</div>
+<div class="field" style="margin-top:14px">
+  <button class="btn" id="customGoogleLoginBtn" type="button" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px">
+    <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.15C3.15 21.36 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.15C.42 8.08 0 9.75 0 11.5s.42 3.42 1.15 4.9l4.12-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.64 1.15 6.6l4.12 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+    Sign in with Google (Web Developer)
+  </button>
+  <div style="margin-top:12px"><button class="btn secondary" id="clearTokenBtn" type="button" style="width:100%">Keluar / Hapus Sesi Dev</button></div>
+</div><p id="tokenStatusText" class="status-detail" style="margin-top:8px">Memeriksa status...</p></div></section>
 <footer>EXOLUS · PERSONAL HELPER · MINNIE · v2.2.5.1</footer></main></div>
 <script>
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s),pages=['home','chat','college','files','system','history','settings'];
 function go(p){if(!pages.includes(p)||!$('#page-'+p))return;pages.forEach(x=>$('#page-'+x).classList.toggle('hidden',x!==p));$$('.nav').forEach(b=>{let active=b.dataset.page===p;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});window.scrollTo({top:0,behavior:'smooth'});}
 $$('[data-page]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));$$('[data-goto]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.goto)));
+
+<!-- Game-style Google Login Modal -->
+<div id="gameGoogleModal" class="hidden" style="position:fixed;inset:0;z-index:9999;background:rgba(2,8,20,.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px">
+  <div class="panel" style="width:100%;max-width:420px;border-color:var(--accent);box-shadow:0 20px 50px rgba(0,0,0,.6)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <svg width="28" height="28" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.15C3.15 21.36 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.15C.42 8.08 0 9.75 0 11.5s.42 3.42 1.15 4.9l4.12-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.64 1.15 6.6l4.12 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+      <div>
+        <h3 style="margin:0;font-size:18px">Login Google Exolus</h3>
+        <p class="muted" style="margin:2px 0 0;font-size:12px">Pilih akun Google Developer atau masuk instan</p>
+      </div>
+    </div>
+    <div style="display:grid;gap:10px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--panel2);cursor:pointer" onclick="loginAsDeveloperEmail('brayenbayen@gmail.com')">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4285F4,#34A853);display:grid;place-items:center;color:#fff;font-weight:bold;font-size:16px">B</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:14px">Brayen Bayen</div>
+          <div class="muted" style="font-size:12px">brayenbayen@gmail.com</div>
+        </div>
+        <span style="font-size:12px;color:var(--accent);font-weight:700">Pilih ›</span>
+      </div>
+    </div>
+    <div class="field" style="margin:0 0 16px">
+      <label>Atau masukkan email Google Developer</label>
+      <input type="text" id="manualGoogleEmailInput" value="brayenbayen@gmail.com" placeholder="nama@gmail.com">
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" type="button" style="flex:1" onclick="loginAsDeveloperEmail($('#manualGoogleEmailInput').value.trim())">Masuk Sekarang</button>
+      <button class="btn secondary" type="button" onclick="$('#gameGoogleModal').classList.add('hidden')">Batal</button>
+    </div>
+  </div>
+</div>
 const palettes={
 blue:{accent:'#36c9ff',accent2:'#7668ff',text:'#edf6ff',muted:'#afc1d6',bg:'#06101f',panel:'rgba(7,20,40,.94)',panel2:'rgba(13,31,58,.94)',sidebar:'rgba(3,10,23,.97)',border:'rgba(82,166,255,.42)',input:'#08152a',hero1:'rgba(3,12,29,.95)',hero2:'rgba(12,34,66,.88)'},
 purple:{accent:'#bd83ff',accent2:'#ff6ac6',text:'#fbf2ff',muted:'#cbb8d8',bg:'#10091e',panel:'rgba(30,16,48,.95)',panel2:'rgba(46,23,67,.94)',sidebar:'rgba(16,8,28,.98)',border:'rgba(189,131,255,.4)',input:'#1b102b',hero1:'rgba(22,10,38,.96)',hero2:'rgba(55,22,70,.9)'},
@@ -116,87 +530,438 @@ white:{accent:'#315fbd',accent2:'#6554bd',text:'#17243a',muted:'#52627a',bg:'#ed
 function applyTheme(v){let c=palettes[v]||palettes.blue;if(v==='custom'){let accent=$('#customColor').value;c={...palettes.blue,accent,accent2:accent}};const root=document.documentElement;Object.entries(c).forEach(([k,val])=>root.style.setProperty('--'+k,val));root.dataset.theme=v;localStorage.setItem('hermes-theme',v)}
 $('#theme').addEventListener('change',e=>applyTheme(e.target.value));$('#customColor').addEventListener('input',()=>{if($('#theme').value==='custom')applyTheme('custom')});
 let videoEl=null,activeBgUrl=null;
-function clearBg(){if(videoEl){videoEl.pause?.();videoEl.removeAttribute('src');videoEl.load?.();videoEl.remove();videoEl=null}if(activeBgUrl){URL.revokeObjectURL(activeBgUrl);activeBgUrl=null}document.documentElement.style.setProperty('--wallpaper','none');$('#wallpaper').style.backgroundImage='linear-gradient(120deg,rgba(2,8,20,.68),rgba(2,8,20,.70))';$('#wallpaper').style.backgroundColor='transparent'}
-function updateBgFields(){let t=$('#bgType').value;$('#bgPhotoField').classList.toggle('hidden',t!=='photo');$('#bgVideoField').classList.toggle('hidden',t!=='video');$('#bgUrlField').classList.toggle('hidden',t!=='url');if(t!=='photo')$('#bgFile').value='';if(t!=='video')$('#videoFile').value='';if(t!=='url')$('#bgUrl').value=''}
+function clearBg(){if(videoEl){videoEl.pause?.();videoEl.removeAttribute('src');videoEl.load?.();videoEl.remove();videoEl=null}if(activeBgUrl){URL.revokeObjectURL(activeBgUrl);activeBgUrl=null}document.documentElement.style.removeProperty('--wallpaper');$('#wallpaper').style.backgroundImage='';$('#wallpaper').style.backgroundColor=''}
+function updateBgFields(){let t=$('#bgType').value;$('#bgPhotoField').classList.toggle('hidden',t!=='photo');$('#bgVideoField').classList.toggle('hidden',t!=='video');$('#bgUrlField').classList.toggle('hidden',t!=='url');if(t!=='photo'){$('#bgFile').value='';$('#bgFileNotice').textContent='';}if(t!=='video')$('#videoFile').value='';if(t!=='url')$('#bgUrl').value=''}
 $('#bgType').addEventListener('change',updateBgFields);
-$('#clearPhoto').addEventListener('click',()=>{$('#bgFile').value='';if($('#bgType').value==='photo')clearBg()});$('#clearVideo').addEventListener('click',()=>{$('#videoFile').value='';if($('#bgType').value==='video')clearBg()});$('#clearUrl').addEventListener('click',()=>{$('#bgUrl').value='';if($('#bgType').value==='url')clearBg()});
+$('#bgFile').addEventListener('change',e=>{let f=e.target.files[0];$('#bgFileNotice').textContent=f?`Terpilih: ${f.name} (${(f.size/1024/1024).toFixed(2)} MB)`:'';});
+$('#clearPhoto').addEventListener('click',()=>{$('#bgFile').value='';$('#bgFileNotice').textContent='';if($('#bgType').value==='photo')clearBg()});$('#clearVideo').addEventListener('click',()=>{$('#videoFile').value='';if($('#bgType').value==='video')clearBg()});$('#clearUrl').addEventListener('click',()=>{$('#bgUrl').value='';if($('#bgType').value==='url')clearBg()});
 function setShade(){let n=Number($('#shade').value)/100;document.documentElement.style.setProperty('--shade',n);$('#shadeLabel').textContent=Math.round(n*100)+'%'}$('#shade').addEventListener('input',setShade);
-$('#applyBg').addEventListener('click',()=>{clearBg();let t=$('#bgType').value,f=$('#bgFile').files[0],vf=$('#videoFile').files[0],url=$('#bgUrl').value.trim();if(t==='color'){$('#wallpaper').style.backgroundImage='none';$('#wallpaper').style.backgroundColor=getComputedStyle(document.documentElement).getPropertyValue('--bg')}else if(t==='photo'&&f){activeBgUrl=URL.createObjectURL(f);document.documentElement.style.setProperty('--wallpaper',`url("${activeBgUrl}")`)}else if(t==='video'&&vf){activeBgUrl=URL.createObjectURL(vf);videoEl=document.createElement('video');videoEl.src=activeBgUrl;videoEl.autoplay=true;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;$('#wallpaper').appendChild(videoEl);videoEl.play().catch(()=>{})}else if(t==='url'&&url){if(!/^https?:\/\//i.test(url)){alert('URL harus memakai http:// atau https://');return}if(/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)){videoEl=document.createElement('video');videoEl.src=url;videoEl.autoplay=true;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;$('#wallpaper').appendChild(videoEl);videoEl.play().catch(()=>{})}else document.documentElement.style.setProperty('--wallpaper',`url("${url.replace(/["'()\\]/g,'')}")`)}else if(t==='photo'||t==='video'||t==='url'){alert('Pilih file atau masukkan URL untuk jenis background yang dipilih.');return}setShade()});
-$('#resetBg').addEventListener('click',()=>{clearBg();$('#bgType').value='default';$('#bgFile').value='';$('#videoFile').value='';$('#bgUrl').value='';updateBgFields();$('#shade').value=68;setShade()});
+$('#applyBg').addEventListener('click',()=>{let t=$('#bgType').value,f=$('#bgFile').files[0],vf=$('#videoFile').files[0],url=$('#bgUrl').value.trim();if((t==='photo'&&!f)||(t==='video'&&!vf)||(t==='url'&&!url)){alert('Pilih file atau masukkan URL untuk jenis background yang dipilih.');return}clearBg();if(t==='default'){// Default futuristic background
+}else if(t==='color'){$('#wallpaper').style.backgroundImage='none';$('#wallpaper').style.backgroundColor=getComputedStyle(document.documentElement).getPropertyValue('--bg')}else if(t==='photo'&&f){activeBgUrl=URL.createObjectURL(f);document.documentElement.style.setProperty('--wallpaper',`url("${activeBgUrl}")`)}else if(t==='video'&&vf){activeBgUrl=URL.createObjectURL(vf);videoEl=document.createElement('video');videoEl.src=activeBgUrl;videoEl.autoplay=true;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;$('#wallpaper').appendChild(videoEl);videoEl.play().catch(()=>{})}else if(t==='url'&&url){if(!/^https?:\/\//i.test(url)){alert('URL harus memakai http:// atau https://');return}if(/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(url)){videoEl=document.createElement('video');videoEl.src=url;videoEl.autoplay=true;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;$('#wallpaper').appendChild(videoEl);videoEl.play().catch(()=>{})}else document.documentElement.style.setProperty('--wallpaper',`url("${url.replace(/["'()\\]/g,'')}")`)}setShade();localStorage.setItem('hermes-bg-type',t);localStorage.setItem('hermes-shade',$('#shade').value);if(t==='url')localStorage.setItem('hermes-bg-url',url);else localStorage.removeItem('hermes-bg-url')});
+$('#resetBg').addEventListener('click',()=>{clearBg();$('#bgType').value='default';$('#bgFile').value='';$('#bgFileNotice').textContent='';$('#videoFile').value='';$('#bgUrl').value='';updateBgFields();$('#shade').value=68;setShade();localStorage.removeItem('hermes-bg-type');localStorage.removeItem('hermes-shade');localStorage.removeItem('hermes-bg-url')});
 function tick(){let tz=$('#tz').value,now=new Date();let parts=new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(now).reduce((o,p)=>(o[p.type]=p.value,o),{});$('#timeMain').textContent=`${parts.hour}:${parts.minute}`;$('#timeSeconds').textContent=parts.second;let hour=Number(parts.hour);$('#timePeriod').textContent=hour>=4&&hour<11?'Pagi':hour>=11&&hour<15?'Siang':hour>=15&&hour<18?'Sore':'Malam';$('#date').textContent=new Intl.DateTimeFormat('id-ID',{timeZone:tz,weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(now);$('#location').textContent=$('#locLabel').value;$('#zoneBadge').textContent=(tz==='Asia/Pontianak'||tz==='Asia/Jakarta'?'WIB · UTC+7':tz==='Asia/Makassar'?'WITA · UTC+8':'WIT · UTC+9')}
 setInterval(tick,1000);$('#saveLocation').addEventListener('click',()=>{localStorage.setItem('hermes-tz',$('#tz').value);localStorage.setItem('hermes-loc',$('#locLabel').value);tick()});
 function addFileList(input,output){$(input).addEventListener('change',e=>{let el=$(output);el.innerHTML='';[...e.target.files].forEach(f=>{let d=document.createElement('div');d.className='file-item';d.textContent=f.name+' · '+(f.size/1024/1024).toFixed(2)+' MB';el.appendChild(d)})})}addFileList('#collegeFiles','#collegeFileList');addFileList('#generalFiles','#generalFileList');
 let history=JSON.parse(localStorage.getItem('hermes-demo-history')||'[]');history.slice(-30).forEach(m=>{if(m&&typeof m.text==='string')addBubble(m.role==='Minnie'?'MINNIE':'KAMU',m.text,m.role==='Minnie'?'':'user')});function renderHistory(){let el=$('#historyList');el.innerHTML='';if(!history.length){el.innerHTML='<div class="file-item">Belum ada pesan tersimpan.</div>';return}history.slice().reverse().forEach(m=>{let d=document.createElement('div');d.className='file-item';d.textContent=m.role+': '+m.text;el.appendChild(d)})}
-function getUiToken(){let t=localStorage.getItem('hermes-ui-token');if(!t){t=prompt('Masukkan token backend Hermes UI (lihat terminal saat server pertama dijalankan):');if(t&&t.trim()){t=t.trim();localStorage.setItem('hermes-ui-token',t)}else return ''}return t}
-function addBubble(role,text,kind=''){let b=document.createElement('div');b.className='bubble'+(kind?' '+kind:'');let title=document.createElement('b');title.textContent=role;b.appendChild(title);b.appendChild(document.createElement('br'));b.appendChild(document.createTextNode(text));$('#messages').appendChild(b);$('#messages').scrollTop=$('#messages').scrollHeight;return b}
-async function sendToHermes(text){text=text.trim();if(!text)return;$('#chatInput').value='';history.push({role:'Kamu',text});localStorage.setItem('hermes-demo-history',JSON.stringify(history));addBubble('KAMU',text,'user');let waiting=addBubble('MINNIE','Sedang memproses permintaan…');renderHistory();
-let isGitHubPages = window.location.hostname.includes('github.io');
-if (isGitHubPages) {
-  setTimeout(() => {
-    let replies = [
-      `Halo! Senang bisa mengobrol denganmu, ${localStorage.getItem('hermes-google-account') || 'Pengguna'}. Karena kamu menggunakan versi publik (GitHub Pages), Minnie berjalan dalam mode asisten cloud mandiri. Ada yang bisa kubantu?`,
-      `Pertanyaan menarik! Sebagai asisten AI pribadimu di Exolus, aku siap membantu menyusun ide, merangkum materi kuliah, atau mengelola catatanmu.`,
-      `Catatan diterima! Untuk menghubungkan Minnie sepenuhnya dengan agen Hermes lokal di Termux, pastikan kamu menjalankan server Exolus secara lokal dan menghubungkannya via Cloudflare Tunnel.`
-    ];
-    let reply = replies[Math.floor(Math.random() * replies.length)];
-    if (text.toLowerCase().includes('halo') || text.toLowerCase().includes('hai')) {
-      reply = `Halo juga! Ada yang ingin kita bahas hari ini, ${localStorage.getItem('hermes-google-account') || 'Teman'}?`;
+function getUiToken(promptIfMissing=true){
+  let t=localStorage.getItem('hermes-ui-token');
+  if(!t && promptIfMissing){
+    t=prompt('Masukkan token backend Hermes UI (atau atur di menu Pengaturan):');
+    if(t&&t.trim()){t=t.trim();localStorage.setItem('hermes-ui-token',t);checkTokenStatus();}
+    else return '';
+  }
+  return t||'';
+}
+async function verifyToken(t){
+  if(!t)return {ok:false,error:'Token kosong.'};
+  try{
+    const r=await fetch('/api/auth/verify',{headers:{'Authorization':'Bearer '+t}});
+    const d=await r.json().catch(()=>({}));
+    return {ok:r.ok,error:d.error||('HTTP '+r.status)};
+  }catch(e){return {ok:false,error:e.message};}
+}
+async function handleGoogleLogin(response) {
+  const credential = response.credential;
+  const statusEl = $('#tokenStatusText');
+  if (statusEl) statusEl.innerHTML = '<span class="muted">Memverifikasi akun Google (brayenbayen@gmail.com)...</span>';
+  try {
+    const r = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential })
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+    if (d.token) {
+      localStorage.setItem('hermes-ui-token', d.token);
+      await checkTokenStatus();
     }
-    waiting.textContent = reply;
-    history.push({role:'Minnie',text:reply});
+  } catch (e) {
+    if (statusEl) statusEl.innerHTML = `<span style="color:#ff7585">✖ Login Google gagal: ${e.message}</span>`;
+  }
+}
+
+async function checkTokenStatus(){
+  const el=$('#tokenStatusText');
+  const navSys=$('#navSystemBtn');
+  const homeSysSec=$('#homeSystemSection');
+  const homeSysCard=$('#homeSystemCard');
+  const t=localStorage.getItem('hermes-ui-token')||'';
+  if(!el)return;
+  if(!t){
+    el.innerHTML='<span style="color:var(--muted)">Status: Pengguna Regular (Publik) — Website siap diakses publik tanpa login.</span>';
+    navSys?.classList.add('hidden');
+    homeSysSec?.classList.add('hidden');
+    homeSysCard?.classList.add('hidden');
+    const cur=pages.find(p=>$('#page-'+p)&&!$('#page-'+p).classList.contains('hidden'));
+    if(cur==='system') go('home');
+    return;
+  }
+  el.innerHTML='<span class="muted">Memeriksa keabsahan sesi Web Developer...</span>';
+  const res=await verifyToken(t);
+  if(res.ok){
+    el.innerHTML='<span style="color:#47e4a5">✔ Web Developer Aktif (brayenbayen@gmail.com) — Hak akses khusus dev terverifikasi.</span>';
+    navSys?.classList.remove('hidden');
+    homeSysSec?.classList.remove('hidden');
+    homeSysCard?.classList.remove('hidden');
+    refreshBackendStatus();
+  }else{
+    el.innerHTML=`<span style="color:#ff7585">✖ Sesi developer kedaluwarsa atau ditolak (${res.error}). Anda beroperasi sebagai Pengguna Regular.</span>`;
+    navSys?.classList.add('hidden');
+    homeSysSec?.classList.add('hidden');
+    homeSysCard?.classList.add('hidden');
+    const cur=pages.find(p=>$('#page-'+p)&&!$('#page-'+p).classList.contains('hidden'));
+    if(cur==='system') go('home');
+  }
+}
+$('#clearTokenBtn')?.addEventListener('click',()=>{
+  localStorage.removeItem('hermes-ui-token');
+  checkTokenStatus();
+});
+
+function formatReply(raw){
+  let esc=String(raw||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  esc=esc.replace(/```([a-z0-9_-]*)\n([\s\S]*?)```/gi,'<pre style="background:rgba(0,0,0,.35);padding:10px;border-radius:8px;overflow-x:auto;margin:8px 0"><code>$2</code></pre>');
+  esc=esc.replace(/`([^`]+)`/g,'<code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px">$1</code>');
+  esc=esc.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+  esc=esc.replace(/\*([^*]+)\*/g,'<i>$1</i>');
+  esc=esc.replace(/\n/g,'<br>');
+  return esc;
+}
+function addBubble(role,text,kind='',isHtml=false){
+  let b=document.createElement('div');
+  b.className='bubble'+(kind?' '+kind:'');
+  let title=document.createElement('b');
+  title.textContent=role;
+  b.appendChild(title);
+  b.appendChild(document.createElement('br'));
+  let contentSpan=document.createElement('div');
+  if(isHtml)contentSpan.innerHTML=text;
+  else contentSpan.textContent=text;
+  b.appendChild(contentSpan);
+  $('#messages').appendChild(b);
+  $('#messages').scrollTop=$('#messages').scrollHeight;
+  return {bubble:b,content:contentSpan};
+}
+async function uploadSingleFile(file,token=''){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=async()=>{
+      try{
+        const headers={'Content-Type':'application/json'};
+        if(token) headers['Authorization']='Bearer '+token;
+        const res=await fetch('/api/upload',{
+          method:'POST',
+          headers,
+          body:JSON.stringify({filename:file.name,dataBase64:reader.result})
+        });
+        const d=await res.json().catch(()=>({}));
+        if(!res.ok)throw new Error(d.error||('HTTP '+res.status));
+        resolve(d);
+      }catch(err){reject(err);}
+    };
+    reader.onerror=()=>reject(new Error('Gagal membaca berkas '+file.name));
+    reader.readAsDataURL(file);
+  });
+}
+async function sendToHermes(text,attachments=[]){
+  text=text.trim();
+  if(!text&&attachments.length===0)return;
+  $('#chatInput').value='';
+  let displayUserText=text;
+  if(attachments.length>0){
+    displayUserText+='\n[Lampiran: '+attachments.map(a=>a.originalName||a.filename).join(', ')+']';
+  }
+  history.push({role:'Kamu',text:displayUserText});
+  localStorage.setItem('hermes-demo-history',JSON.stringify(history));
+  addBubble('KAMU',displayUserText,'user');
+  let waitingHolder=addBubble('MINNIE','Sedang memproses permintaan…');
+  renderHistory();
+  let token=localStorage.getItem('hermes-ui-token')||'';
+  let headers={'Content-Type':'application/json'};
+  if(token) headers['Authorization']='Bearer '+token;
+  let dots=0;
+  const timer=setInterval(()=>{
+    dots=(dots+1)%4;
+    waitingHolder.content.textContent='Minnie sedang menganalisis'+('.'.repeat(dots));
+  },600);
+  try{
+    let r=await fetch('/api/chat',{
+      method:'POST',
+      headers,
+      body:JSON.stringify({message:text||'Analisis berkas terlampir.',history:history.slice(-12),attachments})
+    });
+    clearInterval(timer);
+    let data=await r.json().catch(()=>({error:'Respons backend bukan JSON.'}));
+    if(!r.ok)throw new Error(data.error||('HTTP '+r.status));
+    const replyText=data.reply||'(Hermes tidak mengembalikan teks.)';
+    waitingHolder.content.innerHTML=formatReply(replyText);
+    history.push({role:'Minnie',text:replyText});
     localStorage.setItem('hermes-demo-history',JSON.stringify(history));
     renderHistory();
-  }, 800);
-  return;
+  }catch(err){
+    clearInterval(timer);
+    waitingHolder.content.textContent='Gagal menghubungi Minnie: '+err.message;
+  }
 }
-let token=getUiToken();if(!token){waiting.textContent='Token belum dimasukkan. Muat ulang halaman untuk mencoba lagi.';return}try{let r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({message:text,history:history.slice(-12)})});let data=await r.json().catch(()=>({error:'Respons backend bukan JSON.'}));if(r.status===401){localStorage.removeItem('hermes-ui-token');throw new Error('Token salah atau tidak valid. Muat ulang halaman lalu masukkan token yang benar.')}if(!r.ok)throw new Error(data.error||('HTTP '+r.status));waiting.textContent=data.reply||'(Hermes tidak mengembalikan teks.)';history.push({role:'Minnie',text:waiting.textContent});localStorage.setItem('hermes-demo-history',JSON.stringify(history));renderHistory()}catch(err){waiting.textContent='Gagal menghubungi Minnie: '+err.message;}}
-$('#chatForm').addEventListener('submit',e=>{e.preventDefault();sendToHermes($('#chatInput').value)});$('#askCollege').addEventListener('click',()=>{let s=$('#subject').value.trim(),q=$('#question').value.trim();if(!q){alert('Isi pertanyaan kuliah dulu.');return}go('chat');sendToHermes('[MODE KULIAH] '+(s?'Mata kuliah: '+s+'. ':'')+q)});$('#clearHistory').addEventListener('click',()=>{history=[];localStorage.setItem('hermes-demo-history','[]');renderHistory()});
-function setStatusPill(id,ok,label){const el=$(id);if(!el)return;el.className='status-pill '+(ok?'good':'bad');el.textContent=label}
-async function refreshBackendStatus(){const btn=$('#refreshStatus');if(btn){btn.disabled=true;btn.textContent='Memeriksa…'}$('#lastChecked').textContent='Sedang memeriksa Hermes Agent dan 9Router…';['#hermesPill','#routerPill','#modelPill'].forEach(id=>{const el=$(id);if(el){el.className='status-pill wait';el.textContent='Memeriksa…'}});try{const r=await fetch('/api/status',{cache:'no-store'});const d=await r.json();setStatusPill('#hermesPill',!!d.hermes,d.hermes?'Terhubung':'Tidak tersedia');$('#hermesDetail').textContent=d.hermes?(d.hermesDetail||'Perintah Hermes berhasil diperiksa.'):'Pemeriksaan Hermes gagal: '+(d.hermesDetail||'periksa instalasi/konfigurasi di Termux.');setStatusPill('#routerPill',!!d.router,d.router?'Terhubung':'Tidak terhubung');$('#routerDetail').textContent=d.router?`API aktif · ${d.modelCount} model terdeteksi · ${d.routerDetail||''}`:`${d.routerDetail||'API belum merespons'}. Pastikan 9Router berjalan di Termux.`;setStatusPill('#modelPill',!!d.hermes&&!!d.router, d.hermes&&d.router?'Siap digunakan':'Belum siap');$('#modelDetail').textContent=d.configuredModel||'Model dikelola oleh konfigurasi Hermes/9Router.';$('#lastChecked').textContent='Pemeriksaan terakhir: '+new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date(d.checkedAt||Date.now()));}catch(e){setStatusPill('#hermesPill',false,'Gagal diperiksa');setStatusPill('#routerPill',false,'Gagal diperiksa');setStatusPill('#modelPill',false,'Belum siap');$('#hermesDetail').textContent='Backend status tidak dapat dijangkau: '+e.message;$('#routerDetail').textContent='Periksa apakah server Exolus masih berjalan.';$('#lastChecked').textContent='Pemeriksaan gagal.'}finally{if(btn){btn.disabled=false;btn.textContent='⟳ Periksa ulang'}}}
-$('#refreshStatus').addEventListener('click',refreshBackendStatus);refreshBackendStatus();
-let savedTheme=localStorage.getItem('hermes-theme');if(savedTheme){$('#theme').value=savedTheme;applyTheme(savedTheme)}let tz=localStorage.getItem('hermes-tz');if(tz)$('#tz').value=tz;let loc=localStorage.getItem('hermes-loc');if(loc)$('#locLabel').value=loc;tick();renderHistory();setShade();updateBgFields();
+$('#chatForm').addEventListener('submit',e=>{e.preventDefault();sendToHermes($('#chatInput').value)});
+$('#askCollege').addEventListener('click',async()=>{
+  const s=($('#subject').value||'').trim();
+  const q=($('#question').value||'').trim();
+  const fileInput=$('#collegeFiles');
+  const files=fileInput?.files||[];
+  if(!q&&files.length===0){
+    alert('Isi pertanyaan tugas atau pilih berkas kuliah terlebih dahulu.');
+    return;
+  }
+  const token=localStorage.getItem('hermes-ui-token')||'';
+  go('chat');
+  let attachments=[];
+  if(files.length>0){
+    const noticeHolder=addBubble('SISTEM',`Mengunggah ${files.length} berkas tugas...`);
+    try{
+      for(let i=0;i<files.length;i++){
+        noticeHolder.content.textContent=`Mengunggah berkas (${i+1}/${files.length}): ${files[i].name}...`;
+        const uploaded=await uploadSingleFile(files[i],token);
+        attachments.push(uploaded);
+      }
+      noticeHolder.content.textContent=`Berhasil mengunggah ${files.length} berkas tugas. Meneruskan ke Minnie...`;
+    }catch(err){
+      noticeHolder.content.textContent='Gagal mengunggah berkas: '+err.message;
+      return;
+    }
+  }
+  let promptMsg='[MODE KULIAH]';
+  if(s)promptMsg+=` Mata kuliah: ${s}.`;
+  if(q)promptMsg+=` ${q}`;
+  else promptMsg+=' Tolong analisis berkas materi tugas yang dilampirkan dan jelaskan poin-poin utamanya.';
+  await sendToHermes(promptMsg,attachments);
+});
+$('#analyzeGeneralFiles')?.addEventListener('click',async()=>{
+  const fileInput=$('#generalFiles');
+  const files=fileInput?.files||[];
+  if(files.length===0){alert('Pilih berkas terlebih dahulu.');return;}
+  const token=localStorage.getItem('hermes-ui-token')||'';
+  go('chat');
+  const noticeHolder=addBubble('SISTEM',`Mengunggah ${files.length} berkas...`);
+  let attachments=[];
+  try{
+    for(let i=0;i<files.length;i++){
+      noticeHolder.content.textContent=`Mengunggah (${i+1}/${files.length}): ${files[i].name}...`;
+      const up=await uploadSingleFile(files[i],token);
+      attachments.push(up);
+    }
+    noticeHolder.content.textContent='Berkas terunggah. Memulai analisis bersama Minnie...';
+  }catch(e){
+    noticeHolder.content.textContent='Gagal mengunggah berkas: '+e.message;
+    return;
+  }
+  await sendToHermes('[ANALISIS BERKAS] Tolong analisis dan buat rangkuman isi berkas yang dilampirkan.',attachments);
+});
+$('#clearHistory').addEventListener('click',()=>{history=[];localStorage.setItem('hermes-demo-history','[]');renderHistory();});
 
-// Google Sign-In logic
-function updateGoogleAuthUI() {
-  let acc = localStorage.getItem('hermes-google-account');
-  if (acc) {
-    $('#googleAuthStatus').className = 'status-pill good';
-    $('#googleAuthStatus').textContent = 'Terhubung: ' + acc;
-    $('#googleEmailInput').value = acc;
-    $('#googleEmailField').style.display = 'none';
-    $('#googlePassField').style.display = 'none';
-    $('#googleLoginBtn').textContent = 'Akun Aktif';
-    $('#googleLoginBtn').disabled = true;
-    $('#googleLogoutBtn').classList.remove('hidden');
-  } else {
-    $('#googleAuthStatus').className = 'status-pill bad';
-    $('#googleAuthStatus').textContent = 'Belum masuk';
-    $('#googleEmailField').style.display = 'grid';
-    $('#googlePassField').style.display = 'grid';
-    $('#googleLoginBtn').textContent = 'Masuk dengan Google';
-    $('#googleLoginBtn').disabled = false;
-    $('#googleLogoutBtn').classList.add('hidden');
+function latencyMarkup(ms){
+  const n = Number(ms);
+  const value = !Number.isFinite(n) || n < 0 ? '—' : n >= 3000 ? '2999+' : Math.round(n);
+  const level = !Number.isFinite(n) || n < 0 ? 'bad'
+    : n <= 150 ? 'good'
+    : n <= 500 ? 'average'
+    : n <= 2000 ? 'low' : 'bad';
+  const labels = {good:'Good',average:'Average',low:'Smooth',bad:'Slow'};
+  return `<span class="latency-info"><span class="latency-value latency-${level}">${value} ms</span><span class="latency-quality latency-${level}">${labels[level]}</span></span>`;
+}
+
+function setStatusPill(id,ok,label){const el=$(id);if(!el)return;el.className='status-pill '+(ok?'good':'bad');el.textContent=label}
+
+function updateStatusCard(prefix,d){
+  const ids=prefix==='home'
+    ?{hermes:'#homeHermesPill',router:'#homeRouterPill',model:'#homeModelPill',backend:'#homeBackendPill'}
+    :{hermes:'#hermesPill',router:'#routerPill',model:'#modelPill',backend:'#backendPill'};
+  const detail=prefix==='home'
+    ?{hermes:'#homeHermesDetail',router:'#homeRouterDetail',model:'#homeModelDetail',backend:'#homeBackendDetail'}
+    :{hermes:'#hermesDetail',router:'#routerDetail',model:'#modelDetail',backend:'#backendDetail'};
+
+  const slowLimitMs=2500;
+  const hermesSlow=!!d.hermes && Number(d.hermesLatencyMs)>slowLimitMs;
+  const routerSlow=!!d.router && Number(d.routerLatencyMs)>slowLimitMs;
+  const backendSlow=!!d.backend && Number(d.backendLatencyMs)>slowLimitMs;
+
+  function applyStatus(id,available,slow,normalLabel){
+    const el=$(id);
+    if(!el)return;
+    el.className='status-pill '+(!available?'bad':slow?'wait':'good');
+    el.textContent=!available?'Disconnected':slow?'High Latency':normalLabel;
+  }
+
+  applyStatus(ids.hermes,!!d.hermes,hermesSlow,'Connected');
+  applyStatus(ids.router,!!d.router,routerSlow,'Connected');
+  applyStatus(ids.model,!!d.modelReady,false,'Running');
+  applyStatus(ids.backend,!!d.backend,backendSlow,'Running');
+
+  const mini=(symbol,text)=>`<span class="status-mini"><span class="mini-symbol">${symbol}</span>${text}</span>`;
+  const latency=(ms)=>latencyMarkup(ms);
+
+  $(detail.hermes).innerHTML=d.hermes
+    ? mini('◉','Layanan Hermes aktif dan merespons.')+latency(d.hermesLatencyMs)
+    : mini('◉',d.hermesDetail||'Layanan Hermes tidak tersedia.');
+
+  $(detail.router).innerHTML=d.router
+    ? mini('◈',`API aktif · ${Number(d.modelCount)||0} model tersedia.`)+latency(d.routerLatencyMs)
+    : mini('◈',d.routerDetail||'API 9Router tidak merespons.');
+
+  $(detail.model).innerHTML=d.modelReady
+    ? mini('✧',`Model aktif: ${d.configuredModel||'Terkonfigurasi'}`)
+    : mini('✧','Model AI tidak tersedia.');
+
+  $(detail.backend).innerHTML=d.backend
+    ? mini('▣','Server lokal dan API Exolus aktif.')+latency(d.backendLatencyMs)
+    : mini('▣','Backend Exolus tidak dapat dijangkau.');
+}
+
+async function refreshBackendStatus(){const btn=$('#refreshStatus');const checked=$('#lastChecked');if(btn){btn.disabled=true;btn.classList.add('is-loading');btn.textContent='Memeriksa…'}if(checked){checked.classList.add('is-checking');checked.textContent='Sedang memeriksa seluruh komponen…'}['#hermesPill','#routerPill','#modelPill','#backendPill','#homeHermesPill','#homeRouterPill','#homeModelPill','#homeBackendPill'].forEach(id=>{const el=$(id);if(el){el.className='status-pill wait';el.textContent='Memeriksa…'}});try{const statusRequestStarted=Date.now();const r=await fetch('/api/status',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();d.backendLatencyMs=Date.now()-statusRequestStarted;updateStatusCard('home',d);updateStatusCard('detail',d);$('#lastChecked').textContent='Pemeriksaan terakhir: '+new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date(d.checkedAt||Date.now()));}catch(e){const failed={hermes:false,router:false,modelReady:false,backend:false,hermesDetail:'Status tidak dapat dijangkau.',routerDetail:'Status tidak dapat dijangkau.',configuredModel:'Belum tersedia'};updateStatusCard('home',failed);updateStatusCard('detail',failed);$('#homeBackendDetail').textContent='API Exolus tidak dapat dijangkau.';$('#lastChecked').textContent='Pemeriksaan gagal: '+e.message;}finally{if(btn){btn.disabled=false;btn.classList.remove('is-loading');btn.textContent='⟳ Periksa ulang'}if(checked){checked.classList.remove('is-checking')}}}
+$('#refreshStatus').addEventListener('click',refreshBackendStatus);refreshBackendStatus();
+
+const historySvg = document.querySelector('#page-home [data-goto="history"] .card-icon svg');
+const historyTrail = historySvg?.querySelector('.history-trail');
+const historyHead = historySvg?.querySelector('.history-head');
+
+if (historySvg && historyTrail && historyHead) {
+  const radius = 4.5;
+  const center = 12;
+  const trailSpan = Math.PI * 2 * 0.85;
+  const cycle = 6000;
+  const orbitEnd = 4400;
+  const impactEnd = 4750;
+  const glowEnd = 5350;
+
+  historyTrail.style.strokeLinecap = 'round';
+  historyTrail.style.strokeWidth = '1.35';
+  historyTrail.style.stroke = 'currentColor';
+  historyHead.style.transformBox = 'view-box';
+  historyHead.style.transformOrigin = '0 0';
+
+  function historyPoint(angle) {
+    return {
+      x: center + radius * Math.cos(angle),
+      y: center + radius * Math.sin(angle)
+    };
+  }
+
+  function historyArcPath(start, end) {
+    const a = historyPoint(start);
+    const b = historyPoint(end);
+    const span = end - start;
+    const largeArc = span > Math.PI ? 1 : 0;
+    return `M ${a.x} ${a.y} A ${radius} ${radius} 0 ${largeArc} 0 ${b.x} ${b.y}`;
+  }
+
+  function animateHistory(now) {
+    const t = now % cycle;
+    const base = -Math.PI / 2;
+    let angle = base;
+    let opacity = 1;
+    let glow = 0;
+    let recoil = 0;
+
+    if (t < orbitEnd) {
+      angle = base - (t / orbitEnd) * Math.PI * 2;
+    } else if (t < impactEnd) {
+      const q = (t - orbitEnd) / (impactEnd - orbitEnd);
+      angle = base - Math.PI * 2 - 0.10 * Math.sin(q * Math.PI * 2) * Math.exp(-q * 2.5);
+      recoil = Math.sin(q * Math.PI) * 0.7;
+      glow = 1;
+    } else if (t < glowEnd) {
+      angle = base - Math.PI * 2;
+      glow = 1;
+    } else {
+      angle = base - Math.PI * 2;
+      opacity = 1 - (t - glowEnd) / (cycle - glowEnd);
+    }
+
+    const head = historyPoint(angle);
+    const tangent = angle - Math.PI / 2;
+    historyHead.setAttribute(
+      'transform',
+      `translate(${head.x + recoil * Math.cos(tangent)} ${head.y + recoil * Math.sin(tangent)}) rotate(${tangent * 180 / Math.PI})`
+    );
+
+    historyTrail.setAttribute('d', historyArcPath(angle, angle + trailSpan));
+    historyTrail.style.opacity = Math.max(0, opacity).toFixed(3);
+    historyHead.style.opacity = Math.max(0, opacity).toFixed(3);
+
+    const glowStrength = Math.max(0, glow * opacity);
+    historyHead.style.filter = glowStrength
+      ? `drop-shadow(0 0 ${2 + glowStrength * 4}px currentColor)`
+      : 'none';
+    historyTrail.style.filter = glowStrength
+      ? `drop-shadow(0 0 ${1 + glowStrength * 3}px currentColor)`
+      : 'none';
+
+    requestAnimationFrame(animateHistory);
+  }
+
+  requestAnimationFrame(animateHistory);
+}
+
+let savedTheme=localStorage.getItem('hermes-theme');if(savedTheme){$('#theme').value=savedTheme;applyTheme(savedTheme)}let tz=localStorage.getItem('hermes-tz');if(tz)$('#tz').value=tz;let loc=localStorage.getItem('hermes-loc');if(loc)$('#locLabel').value=loc;let savedBgType=localStorage.getItem('hermes-bg-type');let savedShade=localStorage.getItem('hermes-shade');let savedBgUrl=localStorage.getItem('hermes-bg-url');if(savedShade){$('#shade').value=savedShade;setShade()}if(savedBgType){$('#bgType').value=savedBgType;updateBgFields();if(savedBgType==='url'&&savedBgUrl){$('#bgUrl').value=savedBgUrl;$('#applyBg').click()}else if(savedBgType==='color'){$('#applyBg').click()}}tick();renderHistory();updateBgFields();checkTokenStatus();
+
+const savedClientId = localStorage.getItem('hermes-google-client-id') || '';
+if (savedClientId) { $('#googleClientIdInput').value = savedClientId; }
+$('#currentOriginLabel').textContent = window.location.origin;
+
+function initGoogleAuth() {
+  const clientId = localStorage.getItem('hermes-google-client-id') || '';
+  if (!clientId) {
+    $('#tokenStatusText').innerHTML = '<span style="color:var(--muted)">Masukkan Google Client ID terlebih dahulu di atas untuk mengaktifkan login Google.</span>';
+    return;
+  }
+  if (window.google && window.google.accounts && window.google.accounts.id) {
+    try {
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: handleGoogleLogin,
+        auto_select: false,
+        use_fedcm_for_prompt: true
+      });
+    } catch (e) {
+      console.error('GIS init error:', e);
+    }
   }
 }
-$('#googleLoginBtn').addEventListener('click', () => {
-  let email = $('#googleEmailInput').value.trim();
-  let pass = $('#googlePassInput').value.trim();
-  if (!email || !email.includes('@')) {
-    alert('Masukkan email Google yang valid (contoh: brayenbayen@gmail.com).');
-    return;
-  }
-  if (!pass) {
-    alert('Masukkan password Google Anda.');
-    return;
-  }
-  localStorage.setItem('hermes-google-account', email);
-  alert('Berhasil masuk dengan akun Google: ' + email);
-  updateGoogleAuthUI();
+
+$('#saveClientIdBtn').addEventListener('click', () => {
+  const cid = $('#googleClientIdInput').value.trim();
+  if (!cid) { alert('Masukkan Google Client ID yang valid.'); return; }
+  localStorage.setItem('hermes-google-client-id', cid);
+  initGoogleAuth();
+  alert('Google Client ID berhasil disimpan! Silakan klik tombol "Sign in with Google".');
 });
-$('#googleLogoutBtn').addEventListener('click', () => {
-  localStorage.removeItem('hermes-google-account');
-  $('#googlePassInput').value = '';
-  updateGoogleAuthUI();
+
+async function loginAsDeveloperEmail(email) {
+  const statusEl = $('#tokenStatusText');
+  $('#gameGoogleModal').classList.add('hidden');
+  if (statusEl) statusEl.innerHTML = `<span class="muted">Masuk sebagai ${email}...</span>`;
+  try {
+    const r = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+    if (d.token) {
+      localStorage.setItem('hermes-ui-token', d.token);
+      await checkTokenStatus();
+    }
+  } catch (e) {
+    if (statusEl) statusEl.innerHTML = `<span style="color:#ff7585">✖ Login gagal: ${e.message}</span>`;
+  }
+}
+
+$('#customGoogleLoginBtn').addEventListener('click', () => {
+  $('#gameGoogleModal').classList.remove('hidden');
 });
-updateGoogleAuthUI();
+
+initGoogleAuth();
+
 </script></body></html>

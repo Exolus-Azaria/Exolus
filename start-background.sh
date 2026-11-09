@@ -1,6 +1,8 @@
 #!/data/data/com.termux/files/usr/bin/bash
 set -u
 cd "$(dirname "$0")" || exit 1
+DIR="$PWD"
+TARGET_DIR="${DIR/#\/storage\/emulated\/0/$HOME\/storage\/shared}"
 export PATH="/data/data/com.termux/files/usr/bin:$PATH"
 LOG="$PWD/exolus-server.log"
 PIDFILE="$PWD/exolus-server.pid"
@@ -10,19 +12,19 @@ if [ -f "$PIDFILE" ]; then
   oldpid="$(cat "$PIDFILE" 2>/dev/null || true)"
   if [ -n "$oldpid" ] && kill -0 "$oldpid" 2>/dev/null; then
     echo "Exolus tampaknya sudah berjalan (PID $oldpid)."
-    echo "Alamat: http://127.0.0.1:18765"
+    echo "Alamat: http://127.0.0.1:18767"
     echo "Log: $LOG"
     exit 0
   fi
   rm -f "$PIDFILE"
 fi
-nohup node "$PWD/server.js" >> "$LOG" 2>&1 < /dev/null &
+nohup node --preserve-symlinks-main "$TARGET_DIR/server.js" >> "$LOG" 2>&1 < /dev/null &
 pid=$!
 echo "$pid" > "$PIDFILE"
 sleep 1
 if kill -0 "$pid" 2>/dev/null; then
   echo "Exolus dijalankan di latar belakang (PID $pid)."
-  echo "Alamat: http://127.0.0.1:18765"
+  echo "Alamat: http://127.0.0.1:18767"
   echo "Log: $LOG"
   echo "Stop: bash stop-background.sh"
 else

@@ -14,8 +14,8 @@ MENJALANKAN DI TERMUX
 4. Pastikan Node.js dan Hermes Agent sudah terpasang serta `hermes -z "tes"` berhasil.
 5. Pastikan 9Router berjalan di `127.0.0.1:20128`.
 6. Jalankan `bash start.sh` dan biarkan Termux tetap aktif.
-7. Buka `http://127.0.0.1:18765` di browser HP.
-8. Saat pertama kali chat, masukkan token yang dicetak di terminal.
+7. Buka `http://127.0.0.1:18767` di browser HP.
+8. Saat pertama kali chat, masukkan token yang tersimpan di `~/.config/exolus/.hermes-ui-token` (atau salin langsung dari menu Pengaturan).
 
 MEMBACA STATUS
 - Buka menu Model & Router, lalu tekan Periksa ulang.
