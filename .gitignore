@@ -1,0 +1,34 @@
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*token*
+*secret*
+*.pem
+*.key
+credentials.json
+
+# Runtime files
+*.log
+*.pid
+*.lock
+
+# Dependencies and generated files
+node_modules/
+.npm/
+.cache/
+coverage/
+dist/
+build/
+
+# Backups
+*.backup
+*.bak
+*.old
+*.tmp
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
