@@ -89,14 +89,15 @@ input[type=file]::file-selector-button{background:color-mix(in srgb,var(--accent
 
 
 /* Exolus Status Cards Redesign */
-.status-card{display:flex;flex-direction:column;min-width:0;min-height:190px;overflow:hidden}
-.status-card .card-head{min-width:0;align-items:flex-start}
+.status-card{display:flex;flex-direction:column;min-width:0;min-height:205px;overflow:hidden;padding:20px}
+.status-card .card-head{min-width:0;align-items:flex-start;gap:12px}
 .status-card .card-head>div:last-child{min-width:0;flex:1}
-.status-card h3{font-size:15px;line-height:1.35;white-space:normal;overflow-wrap:anywhere}
-.status-card .status-pill{max-width:100%;width:max-content;white-space:normal;line-height:1.25;font-size:11px;margin-top:5px}
-.status-card .status-detail{margin-top:auto;padding-top:15px;min-width:0;display:flex;flex-direction:column;gap:7px;line-height:1.45}
-.status-mini{display:block;font-size:11px;color:var(--muted);overflow-wrap:anywhere}
-.status-mini .mini-symbol{font-weight:800;margin-right:5px}
+.status-card h3{font-size:15px;line-height:1.35;white-space:normal;overflow-wrap:anywhere;margin:0 0 4px 0}
+.status-card .status-pill{max-width:100%;width:max-content;white-space:normal;line-height:1.25;font-size:11px;margin-top:4px}
+.status-card .status-detail{margin-top:auto;padding-top:12px;min-width:0;display:flex;flex-direction:column;gap:8px;line-height:1.45;color:var(--muted);font-size:12px}
+.status-mini{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--muted);line-height:1.45;overflow-wrap:anywhere}
+.status-mini .mini-symbol{color:var(--accent);flex-shrink:0;width:1.15em;height:1.15em;display:inline-flex;align-items:center;justify-content:center;vertical-align:-0.18em}
+.status-mini .mini-symbol svg{width:100%;height:100%;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .status-card:nth-child(1) h3{color:#55c9ff;text-shadow:0 0 12px rgba(85,201,255,.32);animation:hermesTitleGlow 5s ease-in-out infinite}
 .status-card:nth-child(2) h3{color:#b69aff;text-shadow:0 0 12px rgba(182,154,255,.32);animation:routerTitleGlow 5s ease-in-out infinite}
 .status-card:nth-child(3) h3{color:#43e4df;text-shadow:0 0 12px rgba(67,228,223,.32);animation:modelTitleGlow 5s ease-in-out infinite}
@@ -662,20 +663,10 @@ async function sendToHermes(text,attachments=[]){
     renderHistory();
   }catch(err){
     clearInterval(timer);
-    let replies = [
-      `Halo! Senang bisa mengobrol denganmu. Sebagai asisten AI pribadimu di Exolus, aku siap membantu menyusun ide, merangkum materi, atau menjawab pertanyaanmu!`,
-      `Pertanyaan bagus sekali! Ada hal lain yang ingin kita diskusikan hari ini?`,
-      `Catatan diterima! Aku di sini siap membantu kebutuhan belajar dan produktivitasmu.`
-    ];
-    let fallbackText = replies[Math.floor(Math.random() * replies.length)];
-    if (text.toLowerCase().includes('halo') || text.toLowerCase().includes('hai')) {
-      fallbackText = `Halo juga! Ada yang ingin kita bahas hari ini, Teman? ✨`;
-    } else if (text.includes('1+1') || text.toLowerCase().includes('matematika') || text.toLowerCase().includes('tambah')) {
-      fallbackText = `1 + 1 = 2! Pertanyaan matematika yang mudah ya. Ada lagi yang mau dihitung? 🧮`;
-    }
     waitingHolder.bubble.classList.remove('waiting-bubble');
-    waitingHolder.content.innerHTML = formatReply(fallbackText);
-    history.push({role:'Minnie',text:fallbackText});
+    const errText = `Maaf, terjadi kendala saat terhubung ke asisten AI: ${err.message || 'Gagal memproses pesan'}. Silakan coba kirim ulang pesan Anda.`;
+    waitingHolder.content.innerHTML = formatReply(errText);
+    history.push({role:'Minnie',text:errText});
     saveHistory();
     renderHistory();
   }
@@ -774,24 +765,29 @@ function updateStatusCard(prefix,d){
   applyStatus(ids.model,!!d.modelReady,false,'Running');
   applyStatus(ids.backend,!!d.backend,backendSlow,'Running');
 
-  const mini=(symbol,text)=>`<span class="status-mini"><span class="mini-symbol">${symbol}</span>${text}</span>`;
+  const svgHermes = '<svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M8 12h.01M16 12h.01M8 16h8M2 11v5M22 11v5"/></svg>';
+  const svgRouter = '<svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="m10.7 7-4.4 8.8M13.3 7l4.4 8.8M7.5 18h9"/></svg>';
+  const svgModel = '<svg viewBox="0 0 24 24" focusable="false"><path d="M12 5a3 3 0 0 0-5.7-1.3A3.5 3.5 0 0 0 4 10a3.5 3.5 0 0 0 .7 6.5A3.5 3.5 0 0 0 12 18Z"/><path d="M12 5a3 3 0 0 1 5.7-1.3A3.5 3.5 0 0 1 20 10a3.5 3.5 0 0 1-.7 6.5A3.5 3.5 0 0 1 12 18ZM8 9h2M14 13h2M12 5v15"/></svg>';
+  const svgBackend = '<svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01M11 7h6M11 17h6"/></svg>';
+
+  const mini=(svg,text)=>`<span class="status-mini"><span class="mini-symbol">${svg}</span>${text}</span>`;
   const latency=(ms)=>latencyMarkup(ms);
 
   $(detail.hermes).innerHTML=d.hermes
-    ? mini('◉','Layanan Hermes aktif dan merespons.')+latency(d.hermesLatencyMs)
-    : mini('◉',d.hermesDetail||'Layanan Hermes tidak tersedia.');
+    ? mini(svgHermes,'Layanan Hermes aktif dan merespons.')+latency(d.hermesLatencyMs)
+    : mini(svgHermes,d.hermesDetail||'Layanan Hermes tidak tersedia.');
 
   $(detail.router).innerHTML=d.router
-    ? mini('◈',`API aktif · ${Number(d.modelCount)||0} model tersedia.`)+latency(d.routerLatencyMs)
-    : mini('◈',d.routerDetail||'API 9Router tidak merespons.');
+    ? mini(svgRouter,`API aktif · ${Number(d.modelCount)||0} model tersedia.`)+latency(d.routerLatencyMs)
+    : mini(svgRouter,d.routerDetail||'API 9Router tidak merespons.');
 
   $(detail.model).innerHTML=d.modelReady
-    ? mini('✧',`Model aktif: ${d.configuredModel||'Terkonfigurasi'}`)
-    : mini('✧','Model AI tidak tersedia.');
+    ? mini(svgModel,`Model aktif: ${d.configuredModel||'Terkonfigurasi'}`)
+    : mini(svgModel,'Model AI tidak tersedia.');
 
   $(detail.backend).innerHTML=d.backend
-    ? mini('▣','Server lokal dan API Exolus aktif.')+latency(d.backendLatencyMs)
-    : mini('▣','Backend Exolus tidak dapat dijangkau.');
+    ? mini(svgBackend,'Server lokal dan API Exolus aktif.')+latency(d.backendLatencyMs)
+    : mini(svgBackend,'Backend Exolus tidak dapat dijangkau.');
 }
 
 async function refreshBackendStatus(){const btn=$('#refreshStatus');const checked=$('#lastChecked');if(btn){btn.disabled=true;btn.classList.add('is-loading');btn.textContent='Memeriksa…'}if(checked){checked.classList.add('is-checking');checked.textContent='Sedang memeriksa seluruh komponen…'}['#hermesPill','#routerPill','#modelPill','#backendPill','#homeHermesPill','#homeRouterPill','#homeModelPill','#homeBackendPill'].forEach(id=>{const el=$(id);if(el){el.className='status-pill wait';el.textContent='Memeriksa…'}});try{const statusRequestStarted=Date.now();const r=await apiFetch('/api/status',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();d.backendLatencyMs=Date.now()-statusRequestStarted;updateStatusCard('home',d);updateStatusCard('detail',d);$('#lastChecked').textContent='Pemeriksaan terakhir: '+new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date(d.checkedAt||Date.now()));}catch(e){const cloudStandalone={backend:true,backendDetail:'Mode Mandiri Cloud Publik (Aktif)',hermes:true,hermesDetail:'Asisten Minnie siap merespons.',hermesLatencyMs:12,router:true,routerDetail:'Model cloud aktif.',routerLatencyMs:15,modelReady:true,modelCount:1,configuredModel:'Minnie Cloud AI',checkedAt:new Date().toISOString()};updateStatusCard('home',cloudStandalone);updateStatusCard('detail',cloudStandalone);$('#homeBackendDetail').textContent='Mode Mandiri Cloud Aktif (Tanpa Server Lokal)';$('#lastChecked').textContent='Status: Mode Cloud Publik Aktif';}finally{if(btn){btn.disabled=false;btn.classList.remove('is-loading');btn.textContent='⟳ Periksa ulang'}if(checked){checked.classList.remove('is-checking')}}}

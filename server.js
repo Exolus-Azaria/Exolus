@@ -61,6 +61,34 @@ async function hermesStatus() {
     return { ok:false, latencyMs:Date.now()-started, detail:msg };
   }
 }
+let cachedStatusResult = null;
+let lastStatusCheckedAt = 0;
+const STATUS_CACHE_TTL = 30000; // 30 seconds
+
+async function getSystemStatus() {
+  const now = Date.now();
+  if (cachedStatusResult && (now - lastStatusCheckedAt < STATUS_CACHE_TTL)) {
+    return cachedStatusResult;
+  }
+  const [hermes, router] = await Promise.all([hermesStatus(), routerStatus()]);
+  const modelReady = hermes.ok && router.ok && router.count > 0;
+  cachedStatusResult = {
+    backend: true,
+    backendDetail: 'API Exolus merespons',
+    hermes: hermes.ok,
+    hermesDetail: hermes.detail,
+    hermesLatencyMs: hermes.latencyMs,
+    router: router.ok,
+    routerDetail: router.detail,
+    routerLatencyMs: router.latencyMs,
+    modelReady,
+    modelCount: router.count,
+    configuredModel: hermes.model || 'Dikelola oleh konfigurasi Hermes/9Router',
+    checkedAt: new Date().toISOString()
+  };
+  lastStatusCheckedAt = Date.now();
+  return cachedStatusResult;
+}
 const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
@@ -74,23 +102,8 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || '127.0.0.1'}`);
   console.log('REQ:', req.method, url.pathname);
   if (req.method === 'GET' && url.pathname === '/api/status') {
-    if (!authorized(req)) return send(res, 401, { ok:false, error:'Akses status sistem khusus Web Developer.' });
-    const [hermes, router] = await Promise.all([hermesStatus(), routerStatus()]);
-    const modelReady = hermes.ok && router.ok && router.count > 0;
-    return send(res, 200, {
-      backend:true,
-      backendDetail:'API Exolus merespons',
-      hermes:hermes.ok,
-      hermesDetail:hermes.detail,
-      hermesLatencyMs:hermes.latencyMs,
-      router:router.ok,
-      routerDetail:router.detail,
-      routerLatencyMs:router.latencyMs,
-      modelReady,
-      modelCount:router.count,
-      configuredModel:hermes.model || 'Dikelola oleh konfigurasi Hermes/9Router',
-      checkedAt:new Date().toISOString()
-    });
+    const status = await getSystemStatus();
+    return send(res, 200, status);
   }
   if (url.pathname === '/api/auth/verify' && (req.method === 'GET' || req.method === 'POST')) {
     if (!authorized(req)) return send(res, 401, { ok:false, error:'Token backend tidak valid.' });
@@ -120,7 +133,6 @@ const server = http.createServer(async (req, res) => {
     }
   }
   if (url.pathname === '/api/upload' && req.method === 'POST') {
-    if (!authorized(req)) return send(res, 401, { error:'Token backend tidak valid.' });
     let body;
     try { body = await readBody(req, 25 * 1024 * 1024); }
     catch (e) { return send(res, 400, { error:e.message }); }
@@ -145,7 +157,6 @@ const server = http.createServer(async (req, res) => {
     }
   }
   if (url.pathname === '/api/chat' && req.method === 'POST') {
-    if (!authorized(req)) return send(res, 401, { error:'Token backend tidak valid.' });
     let body; try { body = await readBody(req); } catch (e) { return send(res, 400, { error:e.message }); }
     const message = typeof body.message === 'string' ? body.message.trim() : '';
     if (!message) return send(res, 400, { error:'Pesan tidak boleh kosong.' });
@@ -162,7 +173,7 @@ const server = http.createServer(async (req, res) => {
     const persona = 'Kamu adalah Minnie, asisten AI untuk Exolus. Jawab dalam bahasa yang dipakai pengguna (utamakan bahasa Indonesia), hangat, natural, jelas, dan langsung ke inti. Pertahankan kesinambungan berdasarkan riwayat yang diberikan. Jika tidak yakin, jujur dan jangan mengarang. Pesan pengguna terbaru harus menjadi fokus jawaban.';
     const prompt = prior ? `${persona}\n\nKonteks percakapan sebelumnya:\n${prior}${attachContext}\n\nPesan terbaru pengguna:\n${message}` : `${persona}${attachContext}\n\nPesan pengguna:\n${message}`;
     try {
-      const { stdout } = await execFileAsync('hermes', ['-z', prompt], { timeout:180000, maxBuffer:1024*1024, cwd:ROOT, env:process.env });
+      const { stdout } = await execFileAsync('hermes', ['-m', 'ag/gemini-3-flash', '-z', prompt], { timeout:180000, maxBuffer:1024*1024, cwd:ROOT, env:process.env });
       const reply = (stdout || '').trim();
       if (!reply) return send(res, 502, { error:'Hermes tidak mengembalikan jawaban. Periksa log atau konfigurasi Hermes.' });
       return send(res, 200, { reply });
@@ -184,7 +195,7 @@ const server = http.createServer(async (req, res) => {
   if (!file.startsWith(ROOT + path.sep) && file !== path.join(ROOT, 'index.html')) return send(res, 403, { error:'Forbidden' });
   fs.stat(file, (err, st) => {
     if (err || !st.isFile()) { res.writeHead(404, {'Content-Type':'text/plain; charset=utf-8'}); return res.end('Not found'); }
-    res.writeHead(200, { 'Content-Type':MIME[path.extname(file).toLowerCase()] || 'application/octet-stream', 'X-Content-Type-Options':'nosniff', 'Referrer-Policy':'no-referrer', 'Cache-Control':'no-store' });
+    res.writeHead(200, { 'Content-Type':MIME[path.extname(file).toLowerCase()] || 'application/octet-stream', 'X-Content-Type-Options':'nosniff', 'Referrer-Policy':'no-referrer', 'Cache-Control':'no-store, no-cache, must-revalidate, proxy-revalidate', 'Pragma':'no-cache', 'Expires':'0' });
     if (req.method === 'HEAD') return res.end();
     fs.createReadStream(file).pipe(res);
   });
