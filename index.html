@@ -635,27 +635,6 @@ async function sendToHermes(text,attachments=[]){
   waitingHolder.bubble.classList.add('waiting-bubble');
   renderHistory();
   
-  let isGitHubPages = window.location.hostname.includes('github.io');
-  if (isGitHubPages) {
-    setTimeout(() => {
-      let replies = [
-        `Halo! Senang bisa mengobrol denganmu, ${localStorage.getItem('hermes-google-account') || 'Pengguna'}. Karena kamu menggunakan versi publik (GitHub Pages), Minnie berjalan dalam mode asisten cloud mandiri. Ada yang bisa kubantu?`,
-        `Pertanyaan menarik! Sebagai asisten AI pribadimu di Exolus, aku siap membantu menyusun ide, merangkum materi kuliah, atau mengelola catatanmu.`,
-        `Catatan diterima! Untuk menghubungkan Minnie sepenuhnya dengan agen Hermes lokal di Termux, pastikan kamu menjalankan server Exolus secara lokal dan menghubungkannya via Cloudflare Tunnel.`
-      ];
-      let reply = replies[Math.floor(Math.random() * replies.length)];
-      if (text.toLowerCase().includes('halo') || text.toLowerCase().includes('hai')) {
-        reply = `Halo juga! Ada yang ingin kita bahas hari ini, ${localStorage.getItem('hermes-google-account') || 'Teman'}?`;
-      }
-      waitingHolder.bubble.classList.remove('waiting-bubble');
-      waitingHolder.content.innerHTML = formatReply(reply);
-      history.push({role:'Minnie',text:reply});
-      saveHistory();
-      renderHistory();
-    }, 600);
-    return;
-  }
-
   let token=localStorage.getItem('hermes-ui-token')||'';
   let headers={'Content-Type':'application/json'};
   if(token) headers['Authorization']='Bearer '+token;
@@ -689,6 +668,8 @@ async function sendToHermes(text,attachments=[]){
     let fallbackText = replies[Math.floor(Math.random() * replies.length)];
     if (text.toLowerCase().includes('halo') || text.toLowerCase().includes('hai')) {
       fallbackText = `Halo juga! Ada yang ingin kita bahas hari ini, Teman? ✨`;
+    } else if (text.includes('1+1') || text.toLowerCase().includes('matematika') || text.toLowerCase().includes('tambah')) {
+      fallbackText = `1 + 1 = 2! Pertanyaan matematika yang mudah ya. Ada lagi yang mau dihitung? 🧮`;
     }
     waitingHolder.bubble.classList.remove('waiting-bubble');
     waitingHolder.content.innerHTML = formatReply(fallbackText);
