@@ -8,21 +8,58 @@ if [ ! -f "$TOKEN_FILE" ] && [ -f .hermes-ui-token ]; then
 fi
 
 if ! command -v cloudflared >/dev/null 2>&1; then
-  echo "cloudflared belum terpasang. Pasang cloudflared dari sumber resmi yang sesuai untuk Termux terlebih dahulu."
-  echo "Jangan gunakan tunnel tidak dikenal atau bagikan token UI."
+  echo "cloudflared belum terpasang."
   exit 1
 fi
-if [ ! -f "$TOKEN_FILE" ]; then
-  echo "Token UI belum dibuat di $TOKEN_FILE."
-  echo "Jalankan bash start.sh sekali untuk menghasilkan token, lalu coba lagi."
-  exit 1
+
+echo "Memulai Cloudflare Quick Tunnel HTTPS ke http://127.0.0.1:$PORT..."
+
+rm -f cloudflared.log
+nohup cloudflared tunnel --url "http://127.0.0.1:$PORT" > cloudflared.log 2>&1 &
+CPID=$!
+
+echo "Menunggu URL tunnel dihasilkan..."
+TUNNEL_URL=""
+for i in {1..20}; do
+  if [ -f cloudflared.log ]; then
+    TUNNEL_URL=$(grep -o 'https://[a-zA-Z0-9.-]*\.trycloudflare\.com' cloudflared.log | tail -n 1 || true)
+    if [ -n "$TUNNEL_URL" ]; then
+      break
+    fi
+  fi
+  sleep 1
+done
+
+if [ -n "$TUNNEL_URL" ]; then
+  echo "Tunnel aktif di: $TUNNEL_URL"
+  cat << EOF > backend-url.json
+{
+  "url": "$TUNNEL_URL",
+  "updatedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+}
+EOF
+  git add backend-url.json
+  git commit -m "auto: update cloudflare tunnel url to $TUNNEL_URL" || true
+  git push origin main || true
+  echo "URL Tunnel otomatis tersinkron ke GitHub!"
+else
+  echo "Gagal mendeteksi URL tunnel."
 fi
-TOKEN_LEN=$(wc -c < "$TOKEN_FILE" | tr -d ' ')
-if [ "$TOKEN_LEN" -lt 8 ]; then
-  echo "Token UI terlalu pendek untuk akses publik ($TOKEN_LEN karakter)."
-  echo "Hentikan server, buat token acak panjang, lalu coba lagi."
-  exit 1
-fi
-echo "Memulai Cloudflare Quick Tunnel HTTPS ke http://127.0.0.1:$PORT."
-echo "Alamat HTTPS sementara akan muncul di bawah. Jangan bagikan token UI."
-exec cloudflared tunnel --url "http://127.0.0.1:$PORT"
+
+while kill -0 $CPID 2>/dev/null; do
+  sleep 60
+  NEW_URL=$(grep -o 'https://[a-zA-Z0-9.-]*\.trycloudflare\.com' cloudflared.log | tail -n 1 || true)
+  if [ -n "$NEW_URL" ] && [ "$NEW_URL" != "$TUNNEL_URL" ]; then
+    TUNNEL_URL="$NEW_URL"
+    echo "Tunnel URL berubah menjadi: $TUNNEL_URL"
+    cat << EOF > backend-url.json
+{
+  "url": "$TUNNEL_URL",
+  "updatedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+}
+EOF
+    git add backend-url.json
+    git commit -m "auto: update cloudflare tunnel url to $TUNNEL_URL" || true
+    git push origin main || true
+  fi
+done
