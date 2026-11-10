@@ -494,7 +494,7 @@ function addFileList(input,output){$(input).addEventListener('change',e=>{let el
 let history = [];
 try {
   const sessionKey = 'exolus_session_' + (sessionStorage.getItem('exolus_sid') || (()=>{ const id = Math.random().toString(36).substring(2,12); sessionStorage.setItem('exolus_sid', id); return id; })());
-  const rawHist = sessionStorage.getItem(sessionKey) || localStorage.getItem('hermes-demo-history');
+  const rawHist = sessionStorage.getItem(sessionKey);
   history = rawHist ? JSON.parse(rawHist) : [];
   if (!Array.isArray(history)) history = [];
 } catch (_) {
@@ -505,7 +505,6 @@ function saveHistory(){
     if (history.length > 50) history = history.slice(-50);
     const sessionKey = 'exolus_session_' + sessionStorage.getItem('exolus_sid');
     sessionStorage.setItem(sessionKey, JSON.stringify(history));
-    localStorage.removeItem('hermes-demo-history');
   } catch (e) {
     console.error('Gagal menyimpan riwayat:', e);
   }
@@ -761,7 +760,7 @@ $('#analyzeGeneralFiles')?.addEventListener('click',async()=>{
   }
   await sendToHermes('[ANALISIS BERKAS] Tolong analisis dan buat rangkuman isi berkas yang dilampirkan.',attachments);
 });
-$('#clearHistory').addEventListener('click',()=>{history=[]; const sessionKey = 'exolus_session_' + sessionStorage.getItem('exolus_sid'); sessionStorage.setItem(sessionKey,'[]'); localStorage.removeItem('hermes-demo-history'); renderHistory();});
+$('#clearHistory').addEventListener('click',()=>{history=[]; const sessionKey = 'exolus_session_' + sessionStorage.getItem('exolus_sid'); sessionStorage.setItem(sessionKey,'[]'); renderHistory();});
 
 function latencyMarkup(ms){
   const n = Number(ms);
