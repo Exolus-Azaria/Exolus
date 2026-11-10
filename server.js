@@ -161,25 +161,41 @@ const server = http.createServer(async (req, res) => {
     const message = typeof body.message === 'string' ? body.message.trim() : '';
     if (!message) return send(res, 400, { error:'Pesan tidak boleh kosong.' });
     if (message.length > 25000) return send(res, 413, { error:'Pesan terlalu panjang (maksimum 25.000 karakter).' });
+    
+    // Cek status authorization / token untuk menentukan apakah user adalah Web Developer
+    const isDev = authorized(req);
+
     const rawHistory = Array.isArray(body.history) ? body.history : [];
     const attachments = Array.isArray(body.attachments) ? body.attachments : [];
     let attachContext = '';
     if (attachments.length > 0) {
       const attachList = attachments.map(a => `- Nama Berkas: ${a.originalName || a.filename}\n  Jalur Dokumen: ${a.filepath}`).join('\n');
-      attachContext = `\n\n[BERKAS TUGAS / MATERI DILAMPIRKAN]\nPengguna menyertakan berkas materi berikut:\n${attachList}\nInstruksi untuk asisten: Kamu memiliki akses ke tools seperti 'read_file' dan analisis dokumen/gambar. Gunakan tool untuk membaca isi file jika diperlukan, lalu berikan analisis, rangkuman, pembahasan, atau jawaban tugas sesuai instruksi pengguna secara mendalam dan jelas.`;
+      attachContext = `\n\n[BERKAS TUGAS / MATERI DILAMPIRKAN]\nPengguna menyertakan berkas materi berikut:\n${attachList}\nInstruksi untuk asisten: Analisis dokumen/gambar dengan teliti, lalu berikan pembahasan, rangkuman, atau jawaban tugas sesuai instruksi secara mendalam dan jelas.`;
     }
-    // The browser includes the current user message in history; omit it here to avoid duplication.
-    const prior = rawHistory.slice(0, -1).slice(-10).filter(x => x && typeof x.text === 'string').map(x => `${String(x.role || 'Pesan').slice(0,30)}: ${x.text.slice(0,2200)}`).join('\n');
-    const persona = 'Kamu adalah Minnie, asisten AI untuk Exolus. Jawab dalam bahasa yang dipakai pengguna (utamakan bahasa Indonesia), hangat, natural, jelas, dan langsung ke inti. Pertahankan kesinambungan berdasarkan riwayat yang diberikan. Jika tidak yakin, jujur dan jangan mengarang. Pesan pengguna terbaru harus menjadi fokus jawaban.';
-    const prompt = prior ? `${persona}\n\nKonteks percakapan sebelumnya:\n${prior}${attachContext}\n\nPesan terbaru pengguna:\n${message}` : `${persona}${attachContext}\n\nPesan pengguna:\n${message}`;
+
+    // Bersihkan riwayat agar tidak terjadi perulangan atau echo
+    const prior = rawHistory.slice(0, -1).slice(-8).filter(x => x && typeof x.text === 'string').map(x => `${String(x.role || 'Pesan')}: ${x.text.slice(0,1500)}`).join('\n');
+    
+    const devRestrictionNote = isDev 
+      ? 'Status Pengguna: Web Developer terverifikasi. Anda memiliki akses penuh untuk merombak, mengubah, dan merancang struktur web server, kode backend, maupun konfigurasi sistem.'
+      : 'Status Pengguna: Pengguna Regular (Publik). Anda DAPAT menjawab pertanyaan umum, materi kuliah, tugas, sains, bantuan pemrograman tingkat lanjut, dan diskusi umum. NAMUN, berikan batasan tegas: Anda TIDAK diizinkan atau tidak dapat merombak, mengubah, atau merancang ulang struktur web server Exolus/backend server ini. Jika pengguna regular memaksa ingin merombak web server, tolak dengan sopan dan jelaskan bahwa perubahan struktur web server hanya dapat dilakukan oleh Web Developer yang berwenang.';
+
+    const persona = `Kamu adalah Minnie, asisten AI pribadi untuk Exolus yang didukung sepenuhnya oleh Hermes agent dan model ag/gemini-3-flash melalui 9router. 
+KAMU ADALAH SATU-SATUNYA AI YANG MENJAWAB (bukan cloud mandiri atau layanan lain). 
+Jawab dalam bahasa Indonesia yang hangat, natural, cerdas, dan langsung ke inti.
+${devRestrictionNote}
+Jangan mengulang pertanyaan pengguna, jangan melakukan echo pada pesan sebelumnya, dan berikan jawaban yang murni dan benar.`;
+
+    const prompt = prior ? `${persona}\n\nRiwayat percakapan:\n${prior}${attachContext}\n\nPesan terbaru pengguna:\n${message}` : `${persona}${attachContext}\n\nPesan pengguna:\n${message}`;
+
     try {
       const { stdout } = await execFileAsync('hermes', ['-m', 'ag/gemini-3-flash', '-z', prompt], { timeout:180000, maxBuffer:1024*1024, cwd:ROOT, env:process.env });
       const reply = (stdout || '').trim();
-      if (!reply) return send(res, 502, { error:'Hermes tidak mengembalikan jawaban. Periksa log atau konfigurasi Hermes.' });
+      if (!reply) return send(res, 502, { error:'Minnie tidak mengembalikan jawaban. Periksa log atau konfigurasi Hermes.' });
       return send(res, 200, { reply });
     } catch (e) {
       const timeout = e.killed || e.signal === 'SIGTERM';
-      return send(res, timeout ? 504 : 502, { error: timeout ? 'Hermes melewati batas waktu 180 detik.' : 'Hermes gagal memproses pesan. Periksa `hermes status` dan uji `hermes -z` di Termux.' });
+      return send(res, timeout ? 504 : 502, { error: timeout ? 'Minnie melewati batas waktu 180 detik.' : 'Minnie gagal memproses pesan. Periksa konfigurasi Hermes dan 9router.' });
     }
   }
   if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, { error:'Method tidak diizinkan.' });
