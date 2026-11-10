@@ -211,7 +211,7 @@ Jangan mengulang pertanyaan pengguna, jangan melakukan echo pada pesan sebelumny
   if (!file.startsWith(ROOT + path.sep) && file !== path.join(ROOT, 'index.html')) return send(res, 403, { error:'Forbidden' });
   fs.stat(file, (err, st) => {
     if (err || !st.isFile()) { res.writeHead(404, {'Content-Type':'text/plain; charset=utf-8'}); return res.end('Not found'); }
-    res.writeHead(200, { 'Content-Type':MIME[path.extname(file).toLowerCase()] || 'application/octet-stream', 'X-Content-Type-Options':'nosniff', 'Referrer-Policy':'no-referrer', 'Cache-Control':'no-store, no-cache, must-revalidate, proxy-revalidate', 'Pragma':'no-cache', 'Expires':'0' });
+    res.writeHead(200, { 'Content-Type':MIME[path.extname(file).toLowerCase()] || 'application/octet-stream', 'X-Content-Type-Options':'nosniff', 'Referrer-Policy':'no-referrer', 'Cache-Control':'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0', 'Pragma':'no-cache', 'Expires':'0' });
     if (req.method === 'HEAD') return res.end();
     fs.createReadStream(file).pipe(res);
   });
