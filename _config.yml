@@ -7,9 +7,4 @@ exclude:
   - status-background.sh
   - stop-background.sh
   - install-boot.sh
-  - labels-check.js
-  - HYBRID_ROADMAP.md
-  - design.md
-  - README.txt
-  - CHANGELOG_STATUS_SYNC.txt
   - .gitignore
