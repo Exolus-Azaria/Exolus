@@ -653,7 +653,11 @@ async function uploadSingleFile(file,token=''){
 async function sendToHermes(text,attachments=[]){
   text=text.trim();
   if(!text&&attachments.length===0)return;
-  $('#chatInput').value='';
+  const submitBtn = $('#chatForm button[type="submit"]') || $('#chatSendBtn');
+  const chatInput = $('#chatInput');
+  if(chatInput) chatInput.disabled = true;
+  if(submitBtn) submitBtn.disabled = true;
+
   let displayUserText=text;
   if(attachments.length>0){
     displayUserText+='\n[Lampiran: '+attachments.map(a=>a.originalName||a.filename).join(', ')+']';
@@ -661,7 +665,7 @@ async function sendToHermes(text,attachments=[]){
   history.push({role:'Kamu',text:displayUserText});
   saveHistory();
   addBubble('KAMU',displayUserText,'user');
-  let waitingHolder=addBubble('MINNIE','Sedang memproses permintaan…');
+  let waitingHolder=addBubble('MINNIE','Minnie sedang merespons melalui Hermes Agent & 9Router…');
   waitingHolder.bubble.classList.add('waiting-bubble');
   renderHistory();
   
@@ -671,7 +675,7 @@ async function sendToHermes(text,attachments=[]){
   let dots=0;
   const timer=setInterval(()=>{
     dots=(dots+1)%4;
-    waitingHolder.content.textContent='Minnie sedang menganalisis'+('.'.repeat(dots));
+    waitingHolder.content.textContent='Minnie (ag/gemini-3-flash) sedang memproses'+('.'.repeat(dots));
   },600);
   try{
     let r=await apiFetch('/api/chat',{
@@ -683,7 +687,7 @@ async function sendToHermes(text,attachments=[]){
     let data=await r.json().catch(()=>({error:'Respons backend bukan JSON.'}));
     if(!r.ok)throw new Error(data.error||('HTTP '+r.status));
     waitingHolder.bubble.classList.remove('waiting-bubble');
-    const replyText=data.reply||'(Hermes tidak mengembalikan teks.)';
+    const replyText=data.reply||'(Minnie tidak mengembalikan teks.)';
     waitingHolder.content.innerHTML=formatReply(replyText);
     history.push({role:'Minnie',text:replyText});
     saveHistory();
@@ -691,11 +695,14 @@ async function sendToHermes(text,attachments=[]){
   }catch(err){
     clearInterval(timer);
     waitingHolder.bubble.classList.remove('waiting-bubble');
-    const errText = `Maaf, terjadi kendala saat terhubung ke asisten AI: ${err.message || 'Gagal memproses pesan'}. Silakan coba kirim ulang pesan Anda.`;
+    const errText = `Maaf, terjadi kendala saat terhubung ke Minnie (Hermes/9Router): ${err.message || 'Gagal memproses pesan'}. Silakan coba kirim ulang pesan Anda.`;
     waitingHolder.content.innerHTML = formatReply(errText);
     history.push({role:'Minnie',text:errText});
     saveHistory();
     renderHistory();
+  } finally {
+    if(chatInput) { chatInput.disabled = false; chatInput.focus(); }
+    if(submitBtn) submitBtn.disabled = false;
   }
 }
 $('#chatForm').addEventListener('submit',e=>{e.preventDefault();sendToHermes($('#chatInput').value)});
