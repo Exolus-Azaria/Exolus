@@ -493,17 +493,19 @@ setInterval(tick,1000);$('#saveLocation').addEventListener('click',()=>{localSto
 function addFileList(input,output){$(input).addEventListener('change',e=>{let el=$(output);el.innerHTML='';[...e.target.files].forEach(f=>{let d=document.createElement('div');d.className='file-item';d.textContent=f.name+' · '+(f.size/1024/1024).toFixed(2)+' MB';el.appendChild(d)})})}addFileList('#collegeFiles','#collegeFileList');addFileList('#generalFiles','#generalFileList');
 let history = [];
 try {
-  const rawHist = localStorage.getItem('hermes-demo-history');
+  const sessionKey = 'exolus_session_' + (sessionStorage.getItem('exolus_sid') || (()=>{ const id = Math.random().toString(36).substring(2,12); sessionStorage.setItem('exolus_sid', id); return id; })());
+  const rawHist = sessionStorage.getItem(sessionKey) || localStorage.getItem('hermes-demo-history');
   history = rawHist ? JSON.parse(rawHist) : [];
   if (!Array.isArray(history)) history = [];
 } catch (_) {
   history = [];
-  localStorage.removeItem('hermes-demo-history');
 }
 function saveHistory(){
   try {
     if (history.length > 50) history = history.slice(-50);
-    localStorage.setItem('hermes-demo-history', JSON.stringify(history));
+    const sessionKey = 'exolus_session_' + sessionStorage.getItem('exolus_sid');
+    sessionStorage.setItem(sessionKey, JSON.stringify(history));
+    localStorage.removeItem('hermes-demo-history');
   } catch (e) {
     console.error('Gagal menyimpan riwayat:', e);
   }
@@ -759,7 +761,7 @@ $('#analyzeGeneralFiles')?.addEventListener('click',async()=>{
   }
   await sendToHermes('[ANALISIS BERKAS] Tolong analisis dan buat rangkuman isi berkas yang dilampirkan.',attachments);
 });
-$('#clearHistory').addEventListener('click',()=>{history=[];localStorage.setItem('hermes-demo-history','[]');renderHistory();});
+$('#clearHistory').addEventListener('click',()=>{history=[]; const sessionKey = 'exolus_session_' + sessionStorage.getItem('exolus_sid'); sessionStorage.setItem(sessionKey,'[]'); localStorage.removeItem('hermes-demo-history'); renderHistory();});
 
 function latencyMarkup(ms){
   const n = Number(ms);
